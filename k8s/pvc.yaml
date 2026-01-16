@@ -1,0 +1,18 @@
+# Kurrier PersistentVolumeClaims
+# Storage for DAV/CalDAV data used by kurrier-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kurrier-dav-data
+  namespace: kurrier
+  labels:
+    app: kurrier
+    component: worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path

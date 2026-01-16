@@ -5,12 +5,13 @@ kind: Kustomization
 namespace: kurrier
 
 resources:
-- namespace.yaml
-- secrets.yaml
-- configmap.yaml
-- redis.yaml
-- typesense.yaml
-- supabase.yaml
-- kurrier-app.yaml
-- ingress.yaml
+  - namespace.yaml
+  - secrets.yaml
+  - configmap.yaml
+  - pvc.yaml
+  - redis.yaml
+  - typesense.yaml
+  - supabase.yaml
+  - kurrier-app.yaml
+  - ingress.yaml
 # db-init.yaml 手动执行一次即可

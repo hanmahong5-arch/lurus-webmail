@@ -212,6 +212,13 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          volumeMounts:
+            - name: dav-data
+              mountPath: /dav-data
+      volumes:
+        - name: dav-data
+          persistentVolumeClaim:
+            claimName: kurrier-dav-data
 ---
 apiVersion: v1
 kind: Service

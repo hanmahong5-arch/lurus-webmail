@@ -205,11 +205,11 @@ spec:
               value: "64 160k"
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 300m
+              cpu: 200m
               memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 2Gi
           volumeMounts:
             - name: kong-config
               mountPath: /home/kong/kong.yml
