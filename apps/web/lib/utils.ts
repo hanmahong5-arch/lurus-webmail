@@ -1,65 +1,70 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FetchDecryptedSecretsResult } from "@/lib/actions/dashboard";
 import imageCompression from "browser-image-compression";
 
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 }
 
 export function formDataToJson(formData: FormData) {
-	const data = {} as any;
-	formData.forEach((value, key) => {
-		if (data[key]) {
-			data[key] = Array.isArray(data[key])
-				? [...data[key], value]
-				: [data[key], value];
-		} else {
-			data[key] = value;
-		}
-	});
-	return data;
+  const data = {} as any;
+  formData.forEach((value, key) => {
+    if (data[key]) {
+      data[key] = Array.isArray(data[key])
+        ? [...data[key], value]
+        : [data[key], value];
+    } else {
+      data[key] = value;
+    }
+  });
+  return data;
 }
 
-export function parseSecret(
-	obj?: FetchDecryptedSecretsResult[number] | null,
-): Record<string, any> {
-	return obj?.vault?.decrypted_secret
-		? JSON.parse(obj.vault.decrypted_secret)
-		: {};
+// Type for objects with vault containing decrypted_secret
+// Simplified to avoid circular type dependencies
+export interface SecretContainer {
+  vault?: {
+    decrypted_secret?: string | null;
+  } | null;
+}
+
+export function parseSecret(obj?: SecretContainer | null): Record<string, any> {
+  return obj?.vault?.decrypted_secret
+    ? JSON.parse(obj.vault.decrypted_secret)
+    : {};
 }
 
 export const toArray = (v: string | string[] | undefined | null) =>
-	(Array.isArray(v) ? v : String(v ?? "").split(","))
-		.map((s) => s.trim())
-		.filter(Boolean);
+  (Array.isArray(v) ? v : String(v ?? "").split(","))
+    .map((s) => s.trim())
+    .filter(Boolean);
 
 type ThumbReturn = "dataUrl" | "file" | "arrayBuffer";
 export async function createThumbnail(
-	file: File,
-	format: ThumbReturn = "dataUrl",
-	maxWidthOrHeight = 1920,
-	maxSizeMB = 0.025,
+  file: File,
+  format: ThumbReturn = "dataUrl",
+  maxWidthOrHeight = 1920,
+  maxSizeMB = 0.025,
 ): Promise<string | File | ArrayBuffer> {
-	const compressed = await imageCompression(file, {
-		maxWidthOrHeight,
-		maxSizeMB,
-		initialQuality: 1,
-		useWebWorker: true,
-	});
+  const compressed = await imageCompression(file, {
+    maxWidthOrHeight,
+    maxSizeMB,
+    initialQuality: 1,
+    useWebWorker: true,
+  });
 
-	if (format === "file") return compressed;
+  if (format === "file") return compressed;
 
-	if (format === "arrayBuffer") {
-		return compressed.arrayBuffer();
-	}
+  if (format === "arrayBuffer") {
+    return compressed.arrayBuffer();
+  }
 
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = reject;
-		reader.readAsDataURL(compressed);
-	});
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(compressed);
+  });
 }
 
 // export function setCssVar(name: string, value: string) {
@@ -72,12 +77,12 @@ export async function createThumbnail(
 //
 
 export function setSidebarWidth(width: string) {
-	if (typeof document === "undefined") return;
+  if (typeof document === "undefined") return;
 
-	const el = document.querySelector<HTMLElement>(
-		'[data-slot="sidebar-wrapper"]',
-	);
-	if (!el) return;
+  const el = document.querySelector<HTMLElement>(
+    '[data-slot="sidebar-wrapper"]',
+  );
+  if (!el) return;
 
-	el.style.setProperty("--sidebar-width", width);
+  el.style.setProperty("--sidebar-width", width);
 }
