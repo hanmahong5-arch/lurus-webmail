@@ -1,0 +1,8 @@
+# Kurrier Namespace - 替换 webmail namespace 中的 Roundcube
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kurrier
+  labels:
+    app.kubernetes.io/name: kurrier
+    app.kubernetes.io/part-of: lurus-mail

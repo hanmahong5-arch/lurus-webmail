@@ -1,0 +1,227 @@
+# Kurrier 核心应用 (Web + Worker)
+# Web: 前端 UI，对外通过 Traefik 暴露到 mail.lurus.cn
+# Worker: 后台 IMAP/SMTP 同步服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kurrier-web
+  namespace: kurrier
+  labels:
+    app: kurrier-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kurrier-web
+  template:
+    metadata:
+      labels:
+        app: kurrier-web
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/kurrier-org/kurrier-web:v1.1.11
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: WEB_PORT
+              value: "3000"
+            - name: WEB_URL
+              value: "https://mail.lurus.cn"
+            - name: WORKER_URL
+              value: "http://kurrier-worker:3001"
+            # Database
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgres://postgres:$(POSTGRES_PASSWORD)@lurus-pg-rw.database.svc.cluster.local:5432/kurrier"
+            - name: RLS_CLIENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: RLS_CLIENT_PASSWORD
+            - name: DATABASE_RLS_URL
+              value: "postgres://rls_client:$(RLS_CLIENT_PASSWORD)@lurus-pg-rw.database.svc.cluster.local:5432/kurrier"
+            # Supabase API
+            - name: API_URL
+              value: "http://kurrier-kong:8000"
+            - name: API_PUBLIC_URL
+              value: "https://mail.lurus.cn/api"
+            - name: ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: ANON_KEY
+            - name: SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: SERVICE_ROLE_KEY
+            # Redis
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: REDIS_PASSWORD
+            - name: REDIS_HOST
+              value: "kurrier-redis"
+            - name: REDIS_PORT
+              value: "6379"
+            # Typesense
+            - name: TYPESENSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: TYPESENSE_API_KEY
+            - name: TYPESENSE_HOST
+              value: "kurrier-typesense"
+            - name: TYPESENSE_PORT
+              value: "8108"
+            - name: TYPESENSE_PROTOCOL
+              value: "http"
+            - name: SEARCH_REBUILD_ON_BOOT
+              value: "false"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kurrier-web
+  namespace: kurrier
+spec:
+  selector:
+    app: kurrier-web
+  ports:
+    - port: 3000
+      targetPort: 3000
+      name: http
+---
+# Kurrier Worker (IMAP/SMTP 同步)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kurrier-worker
+  namespace: kurrier
+  labels:
+    app: kurrier-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kurrier-worker
+  template:
+    metadata:
+      labels:
+        app: kurrier-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/kurrier-org/kurrier-worker:v1.1.11
+          ports:
+            - containerPort: 3001
+              name: http
+          env:
+            - name: NITRO_PORT
+              value: "3001"
+            - name: WEB_PORT
+              value: "3000"
+            - name: WEB_URL
+              value: "https://mail.lurus.cn"
+            # Database
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgres://postgres:$(POSTGRES_PASSWORD)@lurus-pg-rw.database.svc.cluster.local:5432/kurrier"
+            - name: RLS_CLIENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: RLS_CLIENT_PASSWORD
+            - name: DATABASE_RLS_URL
+              value: "postgres://rls_client:$(RLS_CLIENT_PASSWORD)@lurus-pg-rw.database.svc.cluster.local:5432/kurrier"
+            # Supabase API
+            - name: API_URL
+              value: "http://kurrier-kong:8000"
+            - name: API_PUBLIC_URL
+              value: "https://mail.lurus.cn/api"
+            - name: ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: ANON_KEY
+            - name: SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: SERVICE_ROLE_KEY
+            # Redis
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: REDIS_PASSWORD
+            - name: REDIS_HOST
+              value: "kurrier-redis"
+            - name: REDIS_PORT
+              value: "6379"
+            # Typesense
+            - name: TYPESENSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kurrier-secrets
+                  key: TYPESENSE_API_KEY
+            - name: TYPESENSE_HOST
+              value: "kurrier-typesense"
+            - name: TYPESENSE_PORT
+              value: "8108"
+            - name: TYPESENSE_PROTOCOL
+              value: "http"
+            - name: SEARCH_REBUILD_ON_BOOT
+              value: "false"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kurrier-worker
+  namespace: kurrier
+spec:
+  selector:
+    app: kurrier-worker
+  ports:
+    - port: 3001
+      targetPort: 3001
+      name: http

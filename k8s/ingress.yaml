@@ -1,0 +1,64 @@
+# Traefik IngressRoute for Kurrier
+# 域名: mail.lurus.cn (替换原来的 Roundcube)
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kurrier-tls
+  namespace: kurrier
+spec:
+  secretName: kurrier-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - mail.lurus.cn
+---
+# 主入口 - Kurrier Web UI
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kurrier-web
+  namespace: kurrier
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`mail.lurus.cn`) && !PathPrefix(`/api`)
+    kind: Rule
+    services:
+    - name: kurrier-web
+      port: 3000
+  tls:
+    secretName: kurrier-tls
+---
+# API 入口 - Kong Gateway (Supabase API)
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kurrier-api
+  namespace: kurrier
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`mail.lurus.cn`) && PathPrefix(`/api`)
+    kind: Rule
+    services:
+    - name: kurrier-kong
+      port: 8000
+    middlewares:
+    - name: kurrier-api-strip
+  tls:
+    secretName: kurrier-tls
+---
+# Middleware: 去掉 /api 前缀
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: kurrier-api-strip
+  namespace: kurrier
+spec:
+  stripPrefix:
+    prefixes:
+    - /api
