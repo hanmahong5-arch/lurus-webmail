@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/kurrier-org/kurrier-web:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-web:latest
           ports:
             - containerPort: 3000
               name: http
@@ -140,7 +140,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: ghcr.io/kurrier-org/kurrier-worker:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-worker:latest
           ports:
             - containerPort: 3001
               name: http
