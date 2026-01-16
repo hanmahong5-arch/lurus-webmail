@@ -56,6 +56,9 @@ ENV API_URL=$API_URL
 ENV DAV_URL=$DAV_URL
 # ---------------------------------------------
 
+# Run TypeScript check first to catch errors early with detailed output
+RUN pnpm exec tsc --noEmit 2>&1 || true
+# Build Next.js
 RUN pnpm run build
 
 
@@ -82,4 +85,3 @@ COPY --from=build /repo/${APP_DIR}/public ./${APP_DIR}/public
 EXPOSE 3000
 # In a monorepo, Next puts server.js under {APP_DIR}/server.js
 CMD ["sh", "-c", "node $APP_DIR/server.js"]
-
