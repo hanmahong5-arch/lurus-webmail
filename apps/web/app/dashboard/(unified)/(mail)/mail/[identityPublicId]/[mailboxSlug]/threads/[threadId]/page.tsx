@@ -32,7 +32,7 @@ async function Page({
 	// Prepare message data for client component
 	const messagesForClient = activeThread?.messages.map((m) => ({
 		id: m.id,
-		isRead: m.isRead,
+		seen: m.seen,
 		from: m.from,
 		createdAt: m.createdAt,
 		textPlain: m.textPlain,

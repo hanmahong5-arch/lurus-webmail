@@ -1,0 +1,58 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+**/.next
+.output
+**/.output
+out
+**/out
+build
+**/build
+dist
+**/dist
+
+# Test and coverage
+coverage
+**/coverage
+html
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment
+.env*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmpclaude-*
+**/tmpclaude-*
+*.log
+*.tmp
+
+# Database
+db/local*
+db/volumes
+db/redis_data
+db/typesense-data
+
+# Documentation (not needed in image)
+*.md
+!README.md
+docs
+
+# K8s configs (not needed in image)
+k8s

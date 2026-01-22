@@ -26,7 +26,7 @@ export function CollapsibleThread({ messages, children }: CollapsibleThreadProps
 			ids.add(messages[messages.length - 1].id);
 			// Expand all unread messages
 			messages.forEach((m) => {
-				if (!m.isRead) {
+				if (!m.seen) {
 					ids.add(m.id);
 				}
 			});
@@ -232,11 +232,11 @@ export function CollapsedMessageHeader({ message, onClick }: CollapsedMessageHea
 			{/* Content */}
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-2">
-					<span className={`font-medium ${!message.isRead ? "font-semibold" : ""}`}>
+					<span className={`font-medium ${!message.seen ? "font-semibold" : ""}`}>
 						{senderName}
 					</span>
 					<span className="text-xs text-muted-foreground">{date}</span>
-					{!message.isRead && (
+					{!message.seen && (
 						<motion.span
 							className="h-2 w-2 rounded-full bg-primary"
 							initial={{ scale: 0 }}

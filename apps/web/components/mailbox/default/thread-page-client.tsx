@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 type ThreadPageClientProps = {
 	messages: Array<{
 		id: string;
-		isRead: boolean;
+		seen: boolean;
 		from: any;
 		createdAt: Date;
 		textPlain?: string | null;
@@ -28,7 +28,7 @@ export default function ThreadPageClient({
 		if (messages.length > 0) {
 			ids.add(messages[messages.length - 1].id);
 			messages.forEach((m) => {
-				if (!m.isRead) {
+				if (!m.seen) {
 					ids.add(m.id);
 				}
 			});
@@ -227,12 +227,12 @@ export default function ThreadPageClient({
 									<div className="flex-1 min-w-0">
 										<div className="flex items-center gap-2">
 											<span
-												className={`font-medium ${!message.isRead ? "font-semibold" : ""}`}
+												className={`font-medium ${!message.seen ? "font-semibold" : ""}`}
 											>
 												{senderName}
 											</span>
 											<span className="text-xs text-muted-foreground">{date}</span>
-											{!message.isRead && (
+											{!message.seen && (
 												<motion.span
 													className="h-2 w-2 rounded-full bg-primary"
 													initial={{ scale: 0 }}
