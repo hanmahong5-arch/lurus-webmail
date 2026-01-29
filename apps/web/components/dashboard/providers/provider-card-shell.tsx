@@ -17,22 +17,23 @@ export default async function ProviderCardShell({
 }: Props) {
 	const userProvider = userProviders.find((p) => p.type === spec.key);
 
+	// Only fetch secrets if userProvider exists to avoid passing "undefined" as parentId
+	if (!userProvider) {
+		return null;
+	}
+
 	const [decryptedSecret] = await fetchDecryptedSecrets({
 		linkTable: providerSecrets,
 		foreignCol: providerSecrets.providerId,
 		secretIdCol: providerSecrets.secretId,
-		parentId: String(userProvider?.id),
+		parentId: userProvider.id,
 	});
 
-	if (userProvider) {
-		return (
-			<ProviderCard
-				spec={spec}
-				userProvider={userProvider}
-				decryptedSecret={decryptedSecret}
-			/>
-		);
-	} else {
-		return <div>No Providers Found</div>;
-	}
+	return (
+		<ProviderCard
+			spec={spec}
+			userProvider={userProvider}
+			decryptedSecret={decryptedSecret}
+		/>
+	);
 }
