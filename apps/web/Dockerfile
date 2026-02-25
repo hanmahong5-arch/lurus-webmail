@@ -1,12 +1,11 @@
 # -----------------------------
 # Build stage
 # -----------------------------
-FROM node:20-alpine AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /repo
-RUN corepack enable
 
 # Monorepo basics
-COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY bun.lock package.json ./
 COPY packages ./packages
 
 # Which app are we building? (default: apps/web)
@@ -17,7 +16,7 @@ ENV APP_DIR=${APP_DIR}
 COPY ${APP_DIR} ./${APP_DIR}
 
 # Install deps after all workspaces & app are present
-RUN pnpm install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 # Build Next.js (standalone)
 WORKDIR /repo/${APP_DIR}
@@ -56,7 +55,7 @@ ENV API_URL=$API_URL
 ENV DAV_URL=$DAV_URL
 # ---------------------------------------------
 
-RUN pnpm run build
+RUN bun run build
 
 
 # -----------------------------

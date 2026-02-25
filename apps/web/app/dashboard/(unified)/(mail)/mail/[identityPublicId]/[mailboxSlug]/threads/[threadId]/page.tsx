@@ -35,8 +35,8 @@ async function Page({
 		seen: m.seen,
 		from: m.from,
 		createdAt: m.createdAt,
-		textPlain: m.textPlain,
-		textHtml: m.textHtml,
+		text: m.text,
+		html: m.html,
 	})) ?? [];
 
 	return (

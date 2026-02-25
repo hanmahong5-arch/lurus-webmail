@@ -55,7 +55,6 @@ db/kurrier-logs.txt
 db/webdav
 packages/db/src/drizzle/meta
 db/caddy
-apps/web/.pnpm-store/
 
 # Claude temp files
 tmpclaude-*
@@ -64,3 +63,6 @@ tmpclaude-*
 # Generated files
 html/
 coverage/
+
+# BMAD framework (lives at root only)
+_bmad/

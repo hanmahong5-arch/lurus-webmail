@@ -30,6 +30,8 @@ import {
 	threads,
 } from "@db";
 import { createMailer } from "@providers";
+import { routeEmail } from "../../lib/smtp/router";
+import { createSendCloudMailer, type SendCloudMailer } from "../../lib/smtp/sendcloud";
 import { toArray } from "drizzle-orm/mysql-core";
 import { and, eq } from "drizzle-orm";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
@@ -46,6 +48,17 @@ const connection = new IORedis({
 	host: serverConfig.REDIS_HOST || "redis",
 	port: Number(serverConfig.REDIS_PORT || 6379),
 });
+
+// Lazy-init SendCloud relay for China domestic delivery
+let _sendCloudMailer: SendCloudMailer | null = null;
+function getSendCloudMailer(): SendCloudMailer | null {
+	if (_sendCloudMailer) return _sendCloudMailer;
+	const apiUser = process.env.SENDCLOUD_API_USER;
+	const apiKey = process.env.SENDCLOUD_API_KEY;
+	if (!apiUser || !apiKey) return null;
+	_sendCloudMailer = createSendCloudMailer();
+	return _sendCloudMailer;
+}
 
 type AttachmentDownload = {
 	item: ReturnType<typeof MessageAttachmentInsertSchema.parse>;
@@ -304,19 +317,56 @@ export default defineNitroPlugin(async (nitroApp) => {
 				seen: true,
 			});
 
-			const mailerResponse = await mailer.sendEmail(data.to, {
-				from: mailbox.identity.value,
-				subject: String(newMessageBody.subject),
-				text: newMessageBody.text ?? "",
-				html: newMessageBody.html ?? "",
-				inReplyTo: inReplyTo ?? "",
-				references: references,
-				attachments: attachmentBlobs.map((att) => ({
-					name: att.name,
-					content: att.blob,
-					contentType: String(att.item.contentType),
-				})),
-			});
+			// Route through SendCloud for China domains, otherwise use default mailer
+			const route = routeEmail(data.to);
+			const sendCloudRelay = getSendCloudMailer();
+
+			let mailerResponse: { success: boolean; MessageId?: string; error?: string };
+
+			if (route.channel === "sendcloud" && sendCloudRelay) {
+				// China domestic recipients -> SendCloud relay
+				const attachmentBuffers = await Promise.all(
+					attachmentBlobs.map(async (att) => ({
+						filename: att.name,
+						content: Buffer.from(await att.blob.arrayBuffer()),
+						contentType: String(att.item.contentType),
+					})),
+				);
+
+				const scResult = await sendCloudRelay.send({
+					from: mailbox.identity.value,
+					to: data.to,
+					subject: String(newMessageBody.subject),
+					text: newMessageBody.text ?? undefined,
+					html: newMessageBody.html ?? undefined,
+					inReplyTo: inReplyTo ?? undefined,
+					references: references.length > 0 ? references : undefined,
+					attachments: attachmentBuffers,
+				});
+
+				mailerResponse = {
+					success: scResult.success,
+					MessageId: scResult.messageId,
+					error: scResult.error,
+				};
+				console.info(`[send-mail] Routed via SendCloud (China): ${data.to.join(",")}`);
+			} else {
+				// International or SendCloud not configured -> default mailer
+				mailerResponse = await mailer.sendEmail(data.to, {
+					from: mailbox.identity.value,
+					subject: String(newMessageBody.subject),
+					text: newMessageBody.text ?? "",
+					html: newMessageBody.html ?? "",
+					inReplyTo: inReplyTo ?? "",
+					references: references,
+					attachments: attachmentBlobs.map((att) => ({
+						name: att.name,
+						content: att.blob,
+						contentType: String(att.item.contentType),
+					})),
+				});
+				console.info(`[send-mail] Routed via ${route.channel}: ${data.to.join(",")}`);
+			}
 
 			if (mailerResponse.success) {
 				const parsedMessage = MessageInsertSchema.parse({

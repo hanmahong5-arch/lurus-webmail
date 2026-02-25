@@ -14,6 +14,6 @@ export const AppearanceSchema = z.object({
 	mode: ThemeModeSchema,
 });
 
-export const THEME_COOKIE = "kurrier.theme"; // "indigo" | "violet" | "teal"
-export const MODE_COOKIE = "kurrier.mode"; // "light" | "dark" | "system"
-export const RESOLVED_COOKIE = "kurrier.resolved"; // "light" | "dark"
+export const THEME_COOKIE = "lurus.theme"; // "indigo" | "violet" | "teal"
+export const MODE_COOKIE = "lurus.mode"; // "light" | "dark" | "system"
+export const RESOLVED_COOKIE = "lurus.resolved"; // "light" | "dark"

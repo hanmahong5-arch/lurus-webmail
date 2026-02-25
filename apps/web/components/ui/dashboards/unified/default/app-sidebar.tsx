@@ -215,7 +215,7 @@ export function AppSidebar({ ...props }: UnifiedSidebarProps) {
 										<MailOpen className="size-4" />
 									</div>
 									<div className="grid flex-1 text-left text-sm leading-tight">
-										<span className="truncate font-medium">Kurrier</span>
+										<span className="truncate font-medium">Lurus Mail</span>
 									</div>
 								</Link>
 							</SidebarMenuButton>
@@ -302,7 +302,7 @@ export function AppSidebar({ ...props }: UnifiedSidebarProps) {
 				<SidebarHeader className="gap-3.5 border-b p-4">
 					<div className="text-left font-sans flex items-center gap-1">
 						<KurrierLogo size={36} />
-						<span className="text-lg font-semibold">kurrier</span>
+						<span className="text-lg font-semibold">Lurus Mail</span>
 					</div>
 					{sidebarTopContent}
 				</SidebarHeader>

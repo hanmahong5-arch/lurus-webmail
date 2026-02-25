@@ -56,7 +56,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 		navSecondary: [
 			{
 				title: "Docs",
-				url: props.publicConfig.DOCS_URL ?? "https://docs.kurrier.org",
+				url: props.publicConfig.DOCS_URL ?? "https://docs.lurus.dev",
 				icon: BookOpen,
 			},
 		],
@@ -85,7 +85,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 							className={"flex justify-start mx-1 items-center gap-1"}
 						>
 							<KurrierLogo size={30} />
-							<span className="truncate font-medium text-xl">Kurrier</span>
+							<span className="truncate font-medium text-xl">Lurus Mail</span>
 						</Link>
 					</SidebarMenuItem>
 				</SidebarMenu>

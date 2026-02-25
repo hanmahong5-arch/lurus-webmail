@@ -12,7 +12,7 @@ import {
 	closestCenter,
 } from "@dnd-kit/core";
 import { Mail, Mails } from "lucide-react";
-import { moveToFolder, moveToTrash } from "@/lib/actions/mailbox";
+import { moveToTrash } from "@/lib/actions/mailbox";
 import { toast } from "sonner";
 
 // Types
@@ -84,20 +84,14 @@ export function MailDndProvider({ children }: MailDndProviderProps) {
 		const { threadId, mailboxId, hasSync } = currentDraggedItem;
 
 		// Determine action based on drop target
+		// Note: Only trash is currently supported via drag-and-drop
+		// Archive/spam/inbox require proper mailbox UUID resolution
 		try {
 			if (dropTarget === "trash") {
 				await moveToTrash(threadId, mailboxId, hasSync, true);
 				toast.success("Message moved to Trash", { position: "bottom-left" });
-			} else if (dropTarget === "archive") {
-				await moveToFolder(threadId, mailboxId, "archive", hasSync);
-				toast.success("Message archived", { position: "bottom-left" });
-			} else if (dropTarget === "spam") {
-				await moveToFolder(threadId, mailboxId, "spam", hasSync);
-				toast.success("Message marked as spam", { position: "bottom-left" });
-			} else if (dropTarget === "inbox") {
-				await moveToFolder(threadId, mailboxId, "inbox", hasSync);
-				toast.success("Message moved to Inbox", { position: "bottom-left" });
 			}
+			// TODO: Implement archive/spam/inbox with proper mailbox UUID lookup
 		} catch (error) {
 			console.error("Failed to move message:", error);
 			toast.error("Failed to move message", { position: "bottom-left" });

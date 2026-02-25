@@ -135,7 +135,7 @@ export function AppSidebar({
 				<SidebarHeader className="gap-3.5 border-b p-4">
 					<div className="text-left font-sans flex items-center gap-1">
 						<KurrierLogo size={36} />
-						<span className="text-lg font-semibold">kurrier</span>
+						<span className="text-lg font-semibold">Lurus Mail</span>
 					</div>
 					<div className={"-mt-1"}>
 						<ComposeMail publicConfig={publicConfig} />

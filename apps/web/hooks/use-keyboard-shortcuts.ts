@@ -80,8 +80,9 @@ export function useKeyboardShortcuts({
 
 			// Find matching shortcut
 			const shortcut = SHORTCUTS.find((s) => {
-				if (s.shift && !shift) return false;
-				if (!s.shift && shift && s.key !== "?") return false;
+				const hasShift = "shift" in s && s.shift;
+				if (hasShift && !shift) return false;
+				if (!hasShift && shift && s.key !== "?") return false;
 				return s.key.toLowerCase() === key.toLowerCase();
 			});
 

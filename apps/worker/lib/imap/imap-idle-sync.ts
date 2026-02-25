@@ -287,14 +287,14 @@ export async function startRealtimeForIdentity(
 		return;
 	}
 
-	if ((client as any).__kurrierRealtimeStarted) {
+	if ((client as any).__lurusRealtimeStarted) {
 		console.log(
 			`[startRealtimeForIdentity] identity=${identityId} realtime already active`,
 		);
 		return;
 	}
 
-	(client as any).__kurrierRealtimeStarted = true;
+	(client as any).__lurusRealtimeStarted = true;
 	await startRealtimeSyncForIdentity(identityId, client, imapInstances);
 }
 
@@ -321,7 +321,7 @@ export async function stopRealtimeForIdentity(
 	}
 
 	console.log(
-		`[kurrier] Stopped realtime + command IMAP clients for identity ${identityId}`,
+		`[lurus] Stopped realtime + command IMAP clients for identity ${identityId}`,
 	);
 }
 

@@ -84,11 +84,11 @@ export function ThreadSummaryBar({
 		const result: { name: string; email: string }[] = [];
 
 		messages.forEach((m) => {
-			const email = getMessageAddress(m.from);
+			const email = getMessageAddress(m, "from");
 			if (email && !seen.has(email.toLowerCase())) {
 				seen.add(email.toLowerCase());
 				result.push({
-					name: getMessageName(m.from) || email,
+					name: getMessageName(m, "from") || email,
 					email,
 				});
 			}
@@ -200,7 +200,7 @@ type CollapsedMessageHeaderProps = {
 };
 
 export function CollapsedMessageHeader({ message, onClick }: CollapsedMessageHeaderProps) {
-	const senderName = getMessageName(message.from) || getMessageAddress(message.from) || "Unknown";
+	const senderName = getMessageName(message, "from") || getMessageAddress(message, "from") || "Unknown";
 	const date = new Date(message.createdAt).toLocaleDateString(undefined, {
 		month: "short",
 		day: "numeric",
@@ -209,7 +209,7 @@ export function CollapsedMessageHeader({ message, onClick }: CollapsedMessageHea
 	});
 
 	// Get preview text (first 100 chars of text content)
-	const preview = message.textPlain?.slice(0, 100) || message.textHtml?.replace(/<[^>]+>/g, "").slice(0, 100) || "";
+	const preview = message.text?.slice(0, 100) || message.html?.replace(/<[^>]+>/g, "").slice(0, 100) || "";
 
 	return (
 		<motion.div

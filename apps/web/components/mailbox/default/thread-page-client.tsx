@@ -1,10 +1,22 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { MessageEntity } from "@db";
 import { Divider, Button } from "@mantine/core";
 import { ChevronDown, ChevronUp, Users } from "lucide-react";
-import { getMessageAddress, getMessageName } from "@common/mail-client";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Helper functions to extract address info from the 'from' field
+// (avoiding dependency on MessageEntity type)
+const extractAddress = (from: any): string | null => {
+	if (!from) return null;
+	if (typeof from === "string") return from;
+	return from.value?.[0]?.address ?? null;
+};
+
+const extractName = (from: any): string | null => {
+	if (!from) return null;
+	if (typeof from === "string") return from.split("@")[0] ?? null;
+	return from.value?.[0]?.name ?? null;
+};
 
 type ThreadPageClientProps = {
 	messages: Array<{
@@ -12,8 +24,8 @@ type ThreadPageClientProps = {
 		seen: boolean;
 		from: any;
 		createdAt: Date;
-		textPlain?: string | null;
-		textHtml?: string | null;
+		text?: string | null;
+		html?: string | null;
 	}>;
 	children: React.ReactNode[];
 };
@@ -64,11 +76,11 @@ export default function ThreadPageClient({
 		const result: { name: string; email: string }[] = [];
 
 		messages.forEach((m) => {
-			const email = getMessageAddress(m.from);
+			const email = extractAddress(m.from);
 			if (email && !seen.has(email.toLowerCase())) {
 				seen.add(email.toLowerCase());
 				result.push({
-					name: getMessageName(m.from) || email,
+					name: extractName(m.from) || email,
 					email,
 				});
 			}
@@ -171,8 +183,8 @@ export default function ThreadPageClient({
 			{messages.map((message, index) => {
 				const isExpanded = expandedIds.has(message.id);
 				const senderName =
-					getMessageName(message.from) ||
-					getMessageAddress(message.from) ||
+					extractName(message.from) ||
+					extractAddress(message.from) ||
 					"Unknown";
 				const date = new Date(message.createdAt).toLocaleDateString(undefined, {
 					month: "short",
@@ -181,8 +193,8 @@ export default function ThreadPageClient({
 					minute: "2-digit",
 				});
 				const preview =
-					message.textPlain?.slice(0, 100) ||
-					message.textHtml?.replace(/<[^>]+>/g, "").slice(0, 100) ||
+					message.text?.slice(0, 100) ||
+					message.html?.replace(/<[^>]+>/g, "").slice(0, 100) ||
 					"";
 
 				return (

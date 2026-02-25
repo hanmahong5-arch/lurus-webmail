@@ -39,6 +39,16 @@ data:
   SMTP_ADMIN_EMAIL: "noreply@lurus.cn"
   SMTP_SENDER_NAME: "Lurus Mail"
 
+  # Stalwart SMTP (cluster-internal direct delivery)
+  STALWART_SMTP_HOST: "stalwart.mail.svc.cluster.local"
+  STALWART_SMTP_PORT: "587"
+  STALWART_API_URL: "http://stalwart.mail.svc.cluster.local:8080"
+  STALWART_ADMIN_USER: "admin"
+
+  # SendCloud relay (China domestic delivery)
+  SENDCLOUD_HOST: "smtp.sendcloud.net"
+  SENDCLOUD_PORT: "587"
+
   # PostgREST
   PGRST_DB_SCHEMAS: "public,storage,graphql_public"
 

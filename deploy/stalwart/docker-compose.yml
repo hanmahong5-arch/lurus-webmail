@@ -1,0 +1,25 @@
+# Local development Stalwart for integration testing
+# Usage: docker compose -f deploy/stalwart/docker-compose.yml up -d
+version: "3.8"
+
+services:
+  stalwart:
+    image: stalwartlabs/mail-server:latest
+    container_name: stalwart-dev
+    hostname: mail.lurus.local
+    ports:
+      - "25:25"
+      - "465:465"
+      - "587:587"
+      - "143:143"
+      - "993:993"
+      - "8080:8080"
+    volumes:
+      - stalwart-data:/opt/stalwart-mail/data
+      - ./config.toml:/opt/stalwart-mail/etc/config.toml:ro
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+
+volumes:
+  stalwart-data:

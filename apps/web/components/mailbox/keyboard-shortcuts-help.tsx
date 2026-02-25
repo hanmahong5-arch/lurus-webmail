@@ -40,8 +40,8 @@ export default function KeyboardShortcutsHelp({ open, onOpenChange }: Props) {
 				whileHover={{ scale: 1.05, backgroundColor: "var(--primary)" }}
 				transition={{ duration: 0.1 }}
 			>
-				{shortcut.shift ? "Shift + " : ""}
-				{shortcut.key === " " ? "Space" : shortcut.key}
+				{"shift" in shortcut && shortcut.shift ? "Shift + " : ""}
+				{shortcut.key}
 			</motion.kbd>
 		</motion.div>
 	);

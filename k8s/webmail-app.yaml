@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/kurrier-org/kurrier-web:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-web:v1.1.11
           ports:
             - containerPort: 3000
               name: http
@@ -148,7 +148,7 @@ spec:
               mountPath: /dav-data
       containers:
         - name: worker
-          image: ghcr.io/kurrier-org/kurrier-worker:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-worker:v1.1.11
           ports:
             - containerPort: 3001
               name: http
@@ -216,6 +216,35 @@ spec:
               value: "http"
             - name: SEARCH_REBUILD_ON_BOOT
               value: "false"
+            # Stalwart Mail Server (cluster-internal)
+            - name: STALWART_SMTP_HOST
+              value: "stalwart.mail.svc.cluster.local"
+            - name: STALWART_SMTP_PORT
+              value: "587"
+            - name: STALWART_API_URL
+              value: "http://stalwart.mail.svc.cluster.local:8080"
+            - name: STALWART_ADMIN_USER
+              value: "admin"
+            - name: STALWART_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: STALWART_ADMIN_PASSWORD
+            # SendCloud relay (China domestic delivery)
+            - name: SENDCLOUD_HOST
+              value: "smtp.sendcloud.net"
+            - name: SENDCLOUD_PORT
+              value: "587"
+            - name: SENDCLOUD_API_USER
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: SENDCLOUD_API_USER
+            - name: SENDCLOUD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: SENDCLOUD_API_KEY
           resources:
             requests:
               cpu: 100m

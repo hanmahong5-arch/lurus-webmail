@@ -12,7 +12,7 @@ export default function LoginPage() {
 					className="flex items-center gap-2 self-center font-medium"
 				>
 					<KurrierLogo size={56} />
-					<span className="truncate font-medium text-4xl">Kurrier</span>
+					<span className="truncate font-medium text-4xl">Lurus Mail</span>
 				</Link>
 				<LoginForm />
 			</div>

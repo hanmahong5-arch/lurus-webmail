@@ -23,6 +23,21 @@ export const ZServerConfig = z.object({
 	TYPESENSE_PROTOCOL: z.string("TYPESENSE_PROTOCOL must be present"),
 	TYPESENSE_HOST: z.string("TYPESENSE_HOST must be present"),
 	SEARCH_REBUILD_ON_BOOT: z.string("SEARCH_REBUILD_ON_BOOT must be present"),
+
+	// SendCloud relay for China domestic delivery
+	SENDCLOUD_API_USER: z.string().optional(),
+	SENDCLOUD_API_KEY: z.string().optional(),
+	SENDCLOUD_HOST: z.string().default("smtp.sendcloud.net"),
+	SENDCLOUD_PORT: z.coerce.number().default(587),
+
+	// Stalwart internal SMTP for direct delivery
+	STALWART_SMTP_HOST: z.string().default("stalwart.mail.svc.cluster.local"),
+	STALWART_SMTP_PORT: z.coerce.number().default(587),
+
+	// Stalwart management API
+	STALWART_API_URL: z.string().default("http://stalwart.mail.svc.cluster.local:8080"),
+	STALWART_ADMIN_USER: z.string().default("admin"),
+	STALWART_ADMIN_PASSWORD: z.string().optional(),
 });
 
 /** Safe to expose to the browser */

@@ -1,17 +1,14 @@
 # --- build ---
-FROM node:20-alpine AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /app
 
 # (optional, but helps some native deps on alpine)
 RUN apk add --no-cache libc6-compat
 
-# use pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
-
 # copy app and build
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm install --no-frozen-lockfile && pnpm run build
+RUN bun install && bun run build
 
 # --- runtime ---
 FROM node:20-alpine AS runtime

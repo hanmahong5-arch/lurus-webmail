@@ -1,6 +1,7 @@
 import { db, decryptAdminSecrets, identities, smtpAccountSecrets } from "@db";
 import { eq } from "drizzle-orm";
 import { ImapFlow } from "imapflow";
+import { isStalwartHost } from "./stalwart";
 
 function safeReconnect(
 	identityId: string,
@@ -57,11 +58,21 @@ export const initSmtpClient = async (
 			? JSON.parse(secrets.vault.decrypted_secret)
 			: {};
 
+		const host = credentials.IMAP_HOST;
+		const isStalwart = isStalwartHost(host);
+
+		// Stalwart on cluster internal network: use port 143, no TLS overhead
+		const port = isStalwart
+			? credentials.IMAP_PORT || 143
+			: credentials.IMAP_PORT;
+		const secure = isStalwart
+			? false
+			: credentials.IMAP_SECURE === "true" || credentials.IMAP_SECURE === true;
+
 		const client = new ImapFlow({
-			host: credentials.IMAP_HOST,
-			port: credentials.IMAP_PORT,
-			secure:
-				credentials.IMAP_SECURE === "true" || credentials.IMAP_SECURE === true,
+			host,
+			port,
+			secure,
 			auth: {
 				user: credentials.IMAP_USERNAME,
 				pass: credentials.IMAP_PASSWORD,
@@ -75,6 +86,8 @@ export const initSmtpClient = async (
 				debug() {},
 			},
 			logRaw: false,
+			// Stalwart internal: enable keepalive for reliable connection
+			keepAlive: isStalwart,
 		});
 
 		try {
@@ -87,6 +100,9 @@ export const initSmtpClient = async (
 
 		imapInstances.set(identityId, client);
 
+		// Stalwart internal: more frequent NOOP (3 min) vs external (5 min)
+		const noopIntervalMs = isStalwart ? 3 * 60 * 1000 : 5 * 60 * 1000;
+
 		const noopInterval = setInterval(
 			async () => {
 				try {
@@ -97,8 +113,12 @@ export const initSmtpClient = async (
 					console.error(`[IMAP:${identityId}] NOOP failed:`, err);
 				}
 			},
-			5 * 60 * 1000,
+			noopIntervalMs,
 		);
+
+		if (isStalwart) {
+			console.info(`[IMAP:${identityId}] Connected to Stalwart (internal)`);
+		}
 
 		const cleanup = (reason: string) => {
 			clearInterval(noopInterval);

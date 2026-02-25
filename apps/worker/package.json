@@ -1,5 +1,5 @@
 {
-	"name": "@kurrier/worker",
+	"name": "@lurus/webmail-worker",
 	"version": "0.2.2",
 	"private": true,
 	"scripts": {

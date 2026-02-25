@@ -18,6 +18,6 @@ exports.AppearanceSchema = zod_1.z.object({
 	theme: exports.ThemeNameSchema,
 	mode: exports.ThemeModeSchema,
 });
-exports.THEME_COOKIE = "kurrier.theme"; // "indigo" | "violet" | "teal"
-exports.MODE_COOKIE = "kurrier.mode"; // "light" | "dark" | "system"
-exports.RESOLVED_COOKIE = "kurrier.resolved"; // "light" | "dark"
+exports.THEME_COOKIE = "lurus.theme"; // "indigo" | "violet" | "teal"
+exports.MODE_COOKIE = "lurus.mode"; // "light" | "dark" | "system"
+exports.RESOLVED_COOKIE = "lurus.resolved"; // "light" | "dark"
