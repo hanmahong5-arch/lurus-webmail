@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: webmail-web-pdb
+  namespace: lurus-webmail
+  labels:
+    app: webmail-web
+    app.kubernetes.io/name: webmail-web
+    app.kubernetes.io/part-of: lurus
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: webmail-web

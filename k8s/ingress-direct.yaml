@@ -31,7 +31,7 @@ spec:
     - name: webmail-web
       port: 3000
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # Auth API - /api/kong/auth/v1/* -> webmail-auth
 apiVersion: traefik.io/v1alpha1
@@ -51,7 +51,7 @@ spec:
     middlewares:
     - name: webmail-auth-strip
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # REST API - /api/kong/rest/v1/* -> webmail-rest
 apiVersion: traefik.io/v1alpha1
@@ -71,7 +71,7 @@ spec:
     middlewares:
     - name: webmail-rest-strip
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # Storage API - /api/kong/storage/v1/* -> webmail-storage
 apiVersion: traefik.io/v1alpha1
@@ -91,7 +91,7 @@ spec:
     middlewares:
     - name: webmail-storage-strip
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # Middleware: 去掉 /api/kong/auth/v1 前缀
 apiVersion: traefik.io/v1alpha1

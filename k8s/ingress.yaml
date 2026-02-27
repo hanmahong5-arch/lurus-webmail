@@ -30,7 +30,7 @@ spec:
     - name: webmail-web
       port: 3000
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # API 入口 - Kong Gateway (Supabase API)
 apiVersion: traefik.io/v1alpha1
@@ -50,7 +50,7 @@ spec:
     middlewares:
     - name: webmail-api-strip
   tls:
-    secretName: webmail-tls
+    secretName: lurus-cn-wildcard-tls
 ---
 # Middleware: 去掉 /api 前缀
 apiVersion: traefik.io/v1alpha1
