@@ -1,6 +1,6 @@
 ---
 name: Support request
-about: Ask for help using Kurrier
+about: Ask for help using Lurus Mail
 labels: question
 ---
 
@@ -11,5 +11,5 @@ labels: question
 ### Logs (optional but recommended)
 
 ```bash
-docker compose logs --timestamps --no-color > kurrier-logs.txt
+docker compose logs --timestamps --no-color > webmail-logs.txt
 ```

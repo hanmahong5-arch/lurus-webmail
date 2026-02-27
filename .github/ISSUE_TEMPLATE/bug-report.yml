@@ -1,5 +1,5 @@
 name: Bug report
-description: File a bug report for Kurrier
+description: File a bug report for Lurus Mail
 labels: [bug]
 
 body:
@@ -16,7 +16,7 @@ body:
     attributes:
       label: Environment
       placeholder: |
-        - Kurrier version:
+        - Lurus Mail version:
     validations:
       required: true
 
@@ -27,15 +27,15 @@ body:
         From the directory containing your `docker-compose.yml`, run:
 
         ```bash
-        docker compose logs --timestamps --no-color > kurrier-logs.txt
+        docker compose logs --timestamps --no-color > webmail-logs.txt
         ```
 
-        Then attach **kurrier-logs.txt** to this issue.
+        Then attach **webmail-logs.txt** to this issue.
 
   - type: checkboxes
     id: logs_confirm
     attributes:
       label: Confirm
       options:
-        - label: I have attached `kurrier-logs.txt`
+        - label: I have attached `webmail-logs.txt`
           required: true

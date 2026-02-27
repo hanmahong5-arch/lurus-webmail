@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Kurrier
+about: Suggest an idea for Lurus Mail
 labels: enhancement
 ---
 
