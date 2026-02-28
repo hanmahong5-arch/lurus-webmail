@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/hanmahong5-arch/lurus-webmail-web:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-web:latest
           ports:
             - containerPort: 3000
               name: http
@@ -47,10 +47,29 @@ spec:
                   key: RLS_CLIENT_PASSWORD
             - name: DATABASE_RLS_URL
               value: "postgres://rls_client:$(RLS_CLIENT_PASSWORD)@10.43.9.14:5432/webmail"
-            # Supabase API (Kong已删除，统一使用Traefik路由)
+            # Zitadel OIDC (v2.0 direct auth)
+            - name: ZITADEL_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_ISSUER
+            - name: ZITADEL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: ZITADEL_CLIENT_ID
+            - name: ZITADEL_REDIRECT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_REDIRECT_URI
+            - name: ZITADEL_POST_LOGOUT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_POST_LOGOUT_URI
+            # Legacy Supabase keys (v1 compat, remove in Epic 5)
             - name: API_URL
-              value: "https://mail.lurus.cn/api"
-            - name: API_PUBLIC_URL
               value: "https://mail.lurus.cn/api"
             - name: ANON_KEY
               valueFrom:
@@ -86,6 +105,17 @@ spec:
               value: "http"
             - name: SEARCH_REBUILD_ON_BOOT
               value: "false"
+            # lurus-identity (account overview, VIP, wallet)
+            - name: IDENTITY_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: IDENTITY_SERVICE_URL
+            - name: IDENTITY_SERVICE_INTERNAL_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: IDENTITY_SERVICE_INTERNAL_KEY
           resources:
             requests:
               cpu: 100m
@@ -148,7 +178,7 @@ spec:
               mountPath: /dav-data
       containers:
         - name: worker
-          image: ghcr.io/hanmahong5-arch/lurus-webmail-worker:v1.1.11
+          image: ghcr.io/hanmahong5-arch/lurus-webmail-worker:latest
           ports:
             - containerPort: 3001
               name: http
@@ -177,10 +207,29 @@ spec:
                   key: RLS_CLIENT_PASSWORD
             - name: DATABASE_RLS_URL
               value: "postgres://rls_client:$(RLS_CLIENT_PASSWORD)@10.43.9.14:5432/webmail"
-            # Supabase API (Kong已删除，统一使用Traefik路由)
+            # Zitadel OIDC (v2.0 direct auth)
+            - name: ZITADEL_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_ISSUER
+            - name: ZITADEL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: webmail-secrets
+                  key: ZITADEL_CLIENT_ID
+            - name: ZITADEL_REDIRECT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_REDIRECT_URI
+            - name: ZITADEL_POST_LOGOUT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: webmail-config
+                  key: ZITADEL_POST_LOGOUT_URI
+            # Legacy Supabase keys (v1 compat, remove in Epic 5)
             - name: API_URL
-              value: "https://mail.lurus.cn/api"
-            - name: API_PUBLIC_URL
               value: "https://mail.lurus.cn/api"
             - name: ANON_KEY
               valueFrom:
