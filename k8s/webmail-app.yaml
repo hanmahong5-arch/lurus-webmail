@@ -71,6 +71,8 @@ spec:
             # Legacy Supabase keys (v1 compat, remove in Epic 5)
             - name: API_URL
               value: "https://mail.lurus.cn/api"
+            - name: API_PUBLIC_URL
+              value: "https://mail.lurus.cn/api"
             - name: ANON_KEY
               valueFrom:
                 secretKeyRef:
@@ -230,6 +232,8 @@ spec:
                   key: ZITADEL_POST_LOGOUT_URI
             # Legacy Supabase keys (v1 compat, remove in Epic 5)
             - name: API_URL
+              value: "https://mail.lurus.cn/api"
+            - name: API_PUBLIC_URL
               value: "https://mail.lurus.cn/api"
             - name: ANON_KEY
               valueFrom:
