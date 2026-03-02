@@ -17,7 +17,7 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
-import KurrierLogo from "@/components/common/kurrier-logo";
+import MailLogo from "@/components/common/mail-logo";
 import { PublicConfig } from "@schema";
 import { UserResponse } from "@supabase/supabase-js";
 import ThemeColorPicker from "@/components/common/theme-color-picker";
@@ -301,7 +301,7 @@ export function AppSidebar({ ...props }: UnifiedSidebarProps) {
 			<Sidebar collapsible="none" className="hidden flex-1 md:flex">
 				<SidebarHeader className="gap-3.5 border-b p-4">
 					<div className="text-left font-sans flex items-center gap-1">
-						<KurrierLogo size={36} />
+						<MailLogo size={36} />
 						<span className="text-lg font-semibold">Lurus Mail</span>
 					</div>
 					{sidebarTopContent}

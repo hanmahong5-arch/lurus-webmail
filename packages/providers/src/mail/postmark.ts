@@ -55,7 +55,7 @@ export class PostmarkMailer implements Mailer {
 	): Promise<boolean> {
 		try {
 			await this.serverClient.sendEmail({
-				From: opts?.from ?? "no-reply@kurrier.org",
+				From: opts?.from ?? "no-reply@lurus.cn",
 				To: to,
 				Subject: opts?.subject ?? "Test email",
 				TextBody:

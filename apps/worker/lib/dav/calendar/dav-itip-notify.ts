@@ -126,7 +126,7 @@ export const davItipNotify = async (opts: {
 	const icalEvent = new ICAL.Event(vevent);
 
 	if (!vcal.getFirstProperty("prodid")) {
-		vcal.addPropertyWithValue("prodid", "-//Kurrier//Calendar 1.0//EN");
+		vcal.addPropertyWithValue("prodid", "-//LurusMail//Calendar 1.0//EN");
 	}
 	if (!vcal.getFirstProperty("version")) {
 		vcal.addPropertyWithValue("version", "2.0");

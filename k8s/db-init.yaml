@@ -1,10 +1,10 @@
 # 数据库初始化 Job
-# 在现有 CNPG lurus-pg 中创建 kurrier 数据库和所需角色
+# 在现有 CNPG lurus-pg 中创建 webmail 数据库和所需角色
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: kurrier-db-init
-  namespace: kurrier
+  name: webmail-db-init
+  namespace: lurus-webmail
 spec:
   ttlSecondsAfterFinished: 300
   template:
@@ -23,23 +23,23 @@ spec:
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
-              name: kurrier-secrets
+              name: webmail-secrets
               key: POSTGRES_PASSWORD
         - name: RLS_CLIENT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kurrier-secrets
+              name: webmail-secrets
               key: RLS_CLIENT_PASSWORD
         command:
         - /bin/sh
         - -c
         - |
           set -e
-          echo "Creating kurrier database..."
-          psql -c "CREATE DATABASE kurrier;" || echo "Database may already exist"
+          echo "Creating webmail database..."
+          psql -c "CREATE DATABASE webmail;" || echo "Database may already exist"
 
           echo "Creating roles..."
-          psql -d kurrier -c "
+          psql -d webmail -c "
             -- Create roles if not exist
             DO \$\$
             BEGIN
@@ -69,9 +69,9 @@ spec:
 
             -- Grant permissions
             GRANT anon, authenticated, service_role TO authenticator;
-            GRANT ALL ON DATABASE kurrier TO supabase_auth_admin;
-            GRANT ALL ON DATABASE kurrier TO supabase_storage_admin;
-            GRANT ALL ON DATABASE kurrier TO rls_client;
+            GRANT ALL ON DATABASE webmail TO supabase_auth_admin;
+            GRANT ALL ON DATABASE webmail TO supabase_storage_admin;
+            GRANT ALL ON DATABASE webmail TO rls_client;
 
             -- Create schemas
             CREATE SCHEMA IF NOT EXISTS auth;

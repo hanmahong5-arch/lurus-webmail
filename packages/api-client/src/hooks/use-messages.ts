@@ -24,7 +24,7 @@ export function useMessages(threadId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: messageKeys.list(threadId),
     queryFn: async () => {
-      const response = await client.get<ApiResponse<MessageDetail[]>>(`/api/kurrier/threads/${threadId}/messages`);
+      const response = await client.get<ApiResponse<MessageDetail[]>>(`/api/mail/threads/${threadId}/messages`);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch messages');
       }
@@ -43,7 +43,7 @@ export function useMessage(id: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: messageKeys.detail(id),
     queryFn: async () => {
-      const response = await client.get<ApiResponse<MessageDetail>>(`/api/kurrier/messages/${id}`);
+      const response = await client.get<ApiResponse<MessageDetail>>(`/api/mail/messages/${id}`);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch message');
       }
@@ -78,7 +78,7 @@ export function useSendEmail() {
 
   return useMutation({
     mutationFn: async (input: SendEmailInput) => {
-      const response = await client.post<ApiResponse<{ messageId: string }>>('/api/kurrier/email/send', input);
+      const response = await client.post<ApiResponse<{ messageId: string }>>('/api/mail/email/send', input);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to send email');
       }
@@ -112,7 +112,7 @@ export function useSaveDraft() {
 
   return useMutation({
     mutationFn: async (input: SaveDraftInput) => {
-      const response = await client.post<ApiResponse<{ draftId: string }>>('/api/kurrier/drafts/save', input);
+      const response = await client.post<ApiResponse<{ draftId: string }>>('/api/mail/drafts/save', input);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to save draft');
       }
@@ -134,7 +134,7 @@ export function useDeleteDraft() {
 
   return useMutation({
     mutationFn: async (draftId: string) => {
-      const response = await client.delete<ApiResponse<null>>(`/api/kurrier/drafts/${draftId}`);
+      const response = await client.delete<ApiResponse<null>>(`/api/mail/drafts/${draftId}`);
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to delete draft');
       }
@@ -154,7 +154,7 @@ export function useDownloadAttachment() {
 
   return useMutation({
     mutationFn: async ({ messageId, attachmentId }: { messageId: string; attachmentId: string }) => {
-      const response = await fetch(`/api/kurrier/messages/${messageId}/attachments/${attachmentId}`);
+      const response = await fetch(`/api/mail/messages/${messageId}/attachments/${attachmentId}`);
       if (!response.ok) {
         throw new Error('Failed to download attachment');
       }

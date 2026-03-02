@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
 					destination: `${process.env.WORKER_URL}:3001/api/v1/:path*`,
 				},
 				{
+					source: "/api/mail/:path*",
+					destination: `${process.env.WORKER_URL}:3001/api/kurrier/:path*`,
+				},
+				{
 					source: "/api/kurrier/:path*",
 					destination: `${process.env.WORKER_URL}:3001/api/kurrier/:path*`,
 				},
@@ -55,7 +59,7 @@ const nextConfig: NextConfig = {
 				},
 				// {
 				//     source: "/.well-known/carddav",
-				//     destination: `${DAV}/dav.php/principals/kurrier/`,
+				//     destination: `${DAV}/dav.php/principals/webmail/`,
 				// },
 				{
 					source: "/.well-known/caldav",

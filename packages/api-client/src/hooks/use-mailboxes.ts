@@ -25,7 +25,7 @@ export function useMailboxes(identityId: string, options?: { enabled?: boolean }
     queryKey: mailboxKeys.list(identityId),
     queryFn: async () => {
       const response = await client.get<ApiResponse<MailboxSummary[]>>(
-        `/api/kurrier/identities/${identityId}/mailboxes`
+        `/api/mail/identities/${identityId}/mailboxes`
       );
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch mailboxes');
@@ -45,7 +45,7 @@ export function useMailbox(id: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: mailboxKeys.detail(id),
     queryFn: async () => {
-      const response = await client.get<ApiResponse<MailboxSummary>>(`/api/kurrier/mailboxes/${id}`);
+      const response = await client.get<ApiResponse<MailboxSummary>>(`/api/mail/mailboxes/${id}`);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch mailbox');
       }
@@ -65,7 +65,7 @@ export function useCreateMailbox() {
   return useMutation({
     mutationFn: async ({ identityId, data }: { identityId: string; data: { name: string; color?: string } }) => {
       const response = await client.post<ApiResponse<MailboxSummary>>(
-        `/api/kurrier/identities/${identityId}/mailboxes`,
+        `/api/mail/identities/${identityId}/mailboxes`,
         data
       );
       if (!response.success || !response.data) {
@@ -88,7 +88,7 @@ export function useUpdateMailbox() {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<MailboxSummary> }) => {
-      const response = await client.patch<ApiResponse<MailboxSummary>>(`/api/kurrier/mailboxes/${id}`, data);
+      const response = await client.patch<ApiResponse<MailboxSummary>>(`/api/mail/mailboxes/${id}`, data);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to update mailbox');
       }
@@ -110,7 +110,7 @@ export function useDeleteMailbox() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const response = await client.delete<ApiResponse<null>>(`/api/kurrier/mailboxes/${id}`);
+      const response = await client.delete<ApiResponse<null>>(`/api/mail/mailboxes/${id}`);
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to delete mailbox');
       }

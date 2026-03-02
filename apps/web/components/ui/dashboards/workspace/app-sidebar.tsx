@@ -13,7 +13,7 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import KurrierLogo from "@/components/common/kurrier-logo";
+import MailLogo from "@/components/common/mail-logo";
 import Link from "next/link";
 import { PublicConfig } from "@schema";
 import { UserResponse } from "@supabase/supabase-js";
@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 							href="/dashboard/platform/overview"
 							className={"flex justify-start mx-1 items-center gap-1"}
 						>
-							<KurrierLogo size={30} />
+							<MailLogo size={30} />
 							<span className="truncate font-medium text-xl">Lurus Mail</span>
 						</Link>
 					</SidebarMenuItem>

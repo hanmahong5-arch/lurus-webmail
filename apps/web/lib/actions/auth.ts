@@ -130,20 +130,19 @@ export const getGravatarUrl = async (email: string, size = 80) => {
 };
 
 /**
- * Sign in with external OAuth provider (Zitadel SSO)
+ * Sign in with external OAuth provider (Zitadel SSO via GoTrue keycloak adapter)
  */
-export type OAuthProvider = "zitadel" | "google" | "github";
+export type OAuthProvider = "keycloak" | "google" | "github";
 
 export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
 	const supabase = await createClient();
 
 	const { data, error } = await supabase.auth.signInWithOAuth({
-		provider: provider as any, // GoTrue custom provider
+		provider: provider as any, // GoTrue keycloak provider → Zitadel OIDC
 		options: {
 			redirectTo: "https://mail.lurus.cn/auth/callback",
 			queryParams: {
-				// Pass any additional params needed for Zitadel
-				...(provider === "zitadel" && {
+				...(provider === "keycloak" && {
 					prompt: "login",
 				}),
 			},

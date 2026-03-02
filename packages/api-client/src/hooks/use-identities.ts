@@ -24,7 +24,7 @@ export function useIdentities(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: identityKeys.list(),
     queryFn: async () => {
-      const response = await client.get<ApiResponse<MailIdentity[]>>('/api/kurrier/identities');
+      const response = await client.get<ApiResponse<MailIdentity[]>>('/api/mail/identities');
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch identities');
       }
@@ -43,7 +43,7 @@ export function useIdentity(id: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: identityKeys.detail(id),
     queryFn: async () => {
-      const response = await client.get<ApiResponse<MailIdentity>>(`/api/kurrier/identities/${id}`);
+      const response = await client.get<ApiResponse<MailIdentity>>(`/api/mail/identities/${id}`);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch identity');
       }
@@ -62,7 +62,7 @@ export function useUpdateIdentity() {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<MailIdentity> }) => {
-      const response = await client.patch<ApiResponse<MailIdentity>>(`/api/kurrier/identities/${id}`, data);
+      const response = await client.patch<ApiResponse<MailIdentity>>(`/api/mail/identities/${id}`, data);
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to update identity');
       }
@@ -84,7 +84,7 @@ export function useDeleteIdentity() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const response = await client.delete<ApiResponse<null>>(`/api/kurrier/identities/${id}`);
+      const response = await client.delete<ApiResponse<null>>(`/api/mail/identities/${id}`);
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to delete identity');
       }

@@ -82,22 +82,38 @@ data:
     #############################################
 
     [auth.spf.verify]
-    ehlo = "relaxed"
-    mail-from = "relaxed"
+    ehlo = "strict"
+    mail-from = "strict"
 
     [auth.dkim]
-    verify = "relaxed"
+    verify = "strict"
     sign = true
 
     [auth.dmarc]
-    verify = "relaxed"
+    verify = "strict"
 
     [auth.arc]
-    verify = "relaxed"
+    verify = "strict"
     seal = true
 
     [auth.iprev]
-    verify = "relaxed"
+    verify = "strict"
+
+    #############################################
+    # DMARC Reporting
+    #############################################
+
+    [report.dmarc]
+    from-name = "Lurus Mail DMARC"
+    from-address = "dmarc-reports@lurus.cn"
+    org-name = "Lurus"
+    send = "daily"
+
+    [report.tls]
+    from-name = "Lurus Mail TLS"
+    from-address = "tls-reports@lurus.cn"
+    org-name = "Lurus"
+    send = "daily"
 
     #############################################
     # Anti-Spam Configuration
@@ -161,6 +177,25 @@ data:
 
     [web-admin]
     enable = true
+
+    #############################################
+    # Admin API Authentication
+    #############################################
+
+    [authentication.fallback-admin]
+    user = "admin"
+    secret = "%{env:STALWART_ADMIN_PASSWORD}%"
+
+    #############################################
+    # OIDC Authentication (Zitadel)
+    #############################################
+
+    [oauth]
+    issuer = "https://auth.lurus.cn"
+    # Token introspection uses Zitadel's userinfo endpoint
+    # Stalwart validates JWT tokens signed by Zitadel
+    [oauth.token]
+    verification = "strict"
 
     #############################################
     # TLS Configuration - ACME (Let's Encrypt)

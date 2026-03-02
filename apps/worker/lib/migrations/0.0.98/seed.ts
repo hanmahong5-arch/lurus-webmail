@@ -22,7 +22,7 @@ export async function migrateLegacyKurrierAccount(
 		return baseCtx;
 	}
 
-	const newUsername = `kurrier-${userId}`;
+	const newUsername = `webmail-${userId}`;
 	const newPrincipalUri = `principals/${newUsername}`;
 	const digest = await md5(`${newUsername}:BaikalDAV:${davPassword}`);
 
@@ -53,7 +53,7 @@ export async function migrateLegacyKurrierAccount(
 		await davDb.insert(davPrincipals).values({
 			uri: newPrincipalUri,
 			email: null,
-			displayname: "Kurrier",
+			displayname: "Lurus Mail",
 		});
 	}
 	const [updatedAccount] = await db

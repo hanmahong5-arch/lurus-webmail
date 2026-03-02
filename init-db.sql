@@ -27,9 +27,9 @@ $$;
 
 -- Grant permissions
 GRANT anon, authenticated, service_role TO authenticator;
-GRANT ALL ON DATABASE kurrier TO supabase_auth_admin;
-GRANT ALL ON DATABASE kurrier TO supabase_storage_admin;
-GRANT ALL ON DATABASE kurrier TO rls_client;
+GRANT ALL ON DATABASE webmail TO supabase_auth_admin;
+GRANT ALL ON DATABASE webmail TO supabase_storage_admin;
+GRANT ALL ON DATABASE webmail TO rls_client;
 
 -- Create schemas
 CREATE SCHEMA IF NOT EXISTS auth;

@@ -15,6 +15,7 @@ resources:
 - ingress.yaml
 - mail-tcp-routes.yaml
 - pdb.yaml
+- hpa.yaml
 # db-init.yaml 手动执行一次即可
 # stalwart/ has its own kustomization (namespace: mail), deploy separately:
 #   kubectl apply -k k8s/stalwart/

@@ -128,7 +128,7 @@ export const davItipReply = async (opts: {
 
 	const icalEvent = new ICAL.Event(vevent);
 
-	vcal.addPropertyWithValue("prodid", "-//Kurrier//Calendar 1.0//EN");
+	vcal.addPropertyWithValue("prodid", "-//LurusMail//Calendar 1.0//EN");
 	vcal.addPropertyWithValue("version", "2.0");
 	vcal.addPropertyWithValue("calscale", "GREGORIAN");
 

@@ -11,3 +11,4 @@ resources:
 - pvc.yaml
 - service.yaml
 - statefulset.yaml
+- backup-cronjob.yaml

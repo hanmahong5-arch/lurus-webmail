@@ -33,7 +33,7 @@ function AddVolumeForm({
 			wrapperClasses: "col-span-12",
 			bottomStartPrefix: (
 				<span className={"text-xs"}>
-					Kurrier will create this bucket in your storage provider.
+					Lurus Mail will create this bucket in your storage provider.
 				</span>
 			),
 			props: {

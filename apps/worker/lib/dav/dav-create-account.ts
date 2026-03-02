@@ -85,7 +85,7 @@ export type DavUserContext = {
 };
 
 async function createDavUser(userId: string): Promise<DavUserContext> {
-	const davUsername = `kurrier-${userId}`;
+	const davUsername = `webmail-${userId}`;
 	const davPassword = randomUUID();
 	const principalUri = `principals/${davUsername}`;
 
@@ -136,7 +136,7 @@ async function createDavUser(userId: string): Promise<DavUserContext> {
 		await davDb.insert(davPrincipals).values({
 			uri: principalUri,
 			email: null,
-			displayname: "Kurrier",
+			displayname: "Lurus Mail",
 		});
 	}
 
@@ -167,7 +167,7 @@ export async function ensureDefaultAddressBook(ctx: DavUserContext) {
 			password: davPassword,
 			collectionPath: addressbookPath,
 			displayName: "Default Address Book",
-			description: "Default Address Book for Kurrier",
+			description: "Default Address Book for Lurus Mail",
 		});
 
 		console.info(
@@ -194,7 +194,7 @@ export async function ensureDefaultAddressBook(ctx: DavUserContext) {
 			ownerId: userId,
 			davAccountId: davAccount.id,
 			davAddressBookId: finalAB.id,
-			name: "Default Address Book for Kurrier",
+			name: "Default Address Book for Lurus Mail",
 			slug: "default",
 			remotePath: addressbookPath,
 			isDefault: true,

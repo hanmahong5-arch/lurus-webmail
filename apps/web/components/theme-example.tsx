@@ -19,7 +19,7 @@ function ThemeExample() {
 					<div className={"h-20 w-20 bg-brand m-2"}></div>
 				</Marquee>
 
-				<h1 className="text-3xl font-semibold">Kurrier Dashboard</h1>
+				<h1 className="text-3xl font-semibold">Lurus Mail Dashboard</h1>
 				<p className="text-base leading-7 text-muted-foreground">
 					A clean, Supabase-inspired mailbox UI.
 				</p>

@@ -1,9 +1,9 @@
-# Development docker-compose file for Kurrier application
+# Development docker-compose file for Lurus Mail application
 
-name: kurrier
+name: webmail
 services:
   web:
-    image: ghcr.io/kurrier-org/kurrier-web:v0.0.85
+    image: ghcr.io/hanmahong5-arch/lurus-webmail-web:v0.0.85
     restart: unless-stopped
     ports:
       - "${WEB_PORT:-3000}:3000"
@@ -35,7 +35,7 @@ services:
       DAV_URL: http://dav:5232
 
   worker:
-    image: ghcr.io/kurrier-org/kurrier-worker:v0.0.85
+    image: ghcr.io/hanmahong5-arch/lurus-webmail-worker:v0.0.85
     restart: unless-stopped
     ports:
       - "${NITRO_PORT:-3001}:3001"

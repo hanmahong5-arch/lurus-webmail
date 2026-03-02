@@ -133,7 +133,7 @@ export class SesMailer implements Mailer {
 	}
 
 	private baseNames(id: string) {
-		const base = `kurrier-${id ?? "acct"}`;
+		const base = `webmail-${id ?? "acct"}`;
 		return {
 			bucket: `${base}-ses-inbound`,
 			topicName: `${base}-ses-inbound-topic`,
@@ -837,7 +837,7 @@ export class SesMailer implements Mailer {
 
 		// Must be a verified email or an address at a verified domain in this SES account/region
 		// const from = (this.cfg as SesConfig).mailFrom ?? to;
-		const from = "no-reply@kurrier.org";
+		const from = "no-reply@lurus.cn";
 
 		try {
 			await this.client.send(
@@ -879,7 +879,7 @@ export class SesMailer implements Mailer {
 
 		// Must be a verified email or an address at a verified domain in this SES account/region
 		// const from = (this.cfg as SesConfig).mailFrom ?? to;
-		// const from = "no-reply@kurrier.org";
+		// const from = "no-reply@lurus.cn";
 
 		// const base64Attachments = await Promise.all(
 		//     opts.attachments.map(async (att) => {

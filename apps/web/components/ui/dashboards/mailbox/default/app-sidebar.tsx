@@ -20,7 +20,7 @@ import { IdentityEntity, MailboxEntity } from "@db";
 import { MailboxNav } from "@/components/mailbox/default/mailbox-nav";
 import ComposeMail from "@/components/mailbox/default/compose-mail";
 import { PublicConfig } from "@schema";
-import KurrierLogo from "@/components/common/kurrier-logo";
+import MailLogo from "@/components/common/mail-logo";
 import { UserResponse } from "@supabase/supabase-js";
 import Link from "next/link";
 import { IconMoonStars, IconSun } from "@tabler/icons-react";
@@ -134,7 +134,7 @@ export function AppSidebar({
 			<Sidebar collapsible="none" className="hidden flex-1 md:flex">
 				<SidebarHeader className="gap-3.5 border-b p-4">
 					<div className="text-left font-sans flex items-center gap-1">
-						<KurrierLogo size={36} />
+						<MailLogo size={36} />
 						<span className="text-lg font-semibold">Lurus Mail</span>
 					</div>
 					<div className={"-mt-1"}>

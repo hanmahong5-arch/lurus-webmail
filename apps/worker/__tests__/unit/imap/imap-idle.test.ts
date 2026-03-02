@@ -406,19 +406,19 @@ describe('IMAP IDLE - Realtime Started Flag', () => {
       usable: true,
     };
 
-    expect(client.__kurrierRealtimeStarted).toBeUndefined();
+    expect(client.__lurusRealtimeStarted).toBeUndefined();
 
-    client.__kurrierRealtimeStarted = true;
+    client.__lurusRealtimeStarted = true;
 
-    expect(client.__kurrierRealtimeStarted).toBe(true);
+    expect(client.__lurusRealtimeStarted).toBe(true);
   });
 
   it('should skip if realtime already started', () => {
     const client: any = {
-      __kurrierRealtimeStarted: true,
+      __lurusRealtimeStarted: true,
     };
 
-    if (client.__kurrierRealtimeStarted) {
+    if (client.__lurusRealtimeStarted) {
       // Should return early
       expect(true).toBe(true);
     }

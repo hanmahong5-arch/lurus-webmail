@@ -18,7 +18,7 @@ const redisConnection = {
 	},
 };
 
-const PREFIX = "kurrier:";
+const PREFIX = "webmail:";
 
 export async function kvSet(key: string, value: unknown, ttlSec?: number) {
 	const v = typeof value === "string" ? value : JSON.stringify(value);

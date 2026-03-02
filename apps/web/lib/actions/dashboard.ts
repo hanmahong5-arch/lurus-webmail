@@ -560,8 +560,8 @@ export const testSendingEmail = async (
 		if (userIdentity?.smtp_accounts) {
 			const mailer = createMailer("smtp", decryptedSecrets);
 			await mailer.sendTestEmail(userIdentity.identities.value, {
-				subject: "Test email from Kurrier",
-				body: "This is a test email from your configured SMTP account in Kurrier.",
+				subject: "Test email from Lurus Mail",
+				body: "This is a test email from your configured SMTP account in Lurus Mail.",
 			});
 			return { success: true, message: "Test email sent successfully." };
 		} else if (userIdentity?.providers) {
@@ -570,9 +570,9 @@ export const testSendingEmail = async (
 				decryptedSecrets,
 			);
 			await mailer.sendTestEmail(userIdentity.identities.value, {
-				subject: "Test email from Kurrier",
+				subject: "Test email from Lurus Mail",
 				from: userIdentity.identities.value,
-				body: "This is a test email from your configured account in Kurrier.",
+				body: "This is a test email from your configured account in Lurus Mail.",
 			});
 			return { success: true, message: "Test email sent successfully." };
 		}

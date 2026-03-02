@@ -10,7 +10,6 @@ metadata:
   labels:
     app: webmail-web
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: webmail-web
@@ -161,7 +160,6 @@ metadata:
   labels:
     app: webmail-worker
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: webmail-worker

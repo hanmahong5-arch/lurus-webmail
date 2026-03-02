@@ -82,7 +82,7 @@ export default function SyncServicesHome({
 						<p className="text-xs text-muted-foreground max-w-prose">
 							These credentials are used by your calendar and contacts apps.
 							They are <span className="font-semibold">separate</span> from your
-							Kurrier login.
+							Lurus Mail login.
 						</p>
 					</div>
 

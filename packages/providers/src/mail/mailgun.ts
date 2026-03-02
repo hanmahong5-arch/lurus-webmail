@@ -57,7 +57,7 @@ export class MailgunMailer implements Mailer {
 			const domain = opts.from.split("@")[1];
 
 			await this.client.messages.create(domain, {
-				from: opts?.from ?? "no-reply@kurrier.org",
+				from: opts?.from ?? "no-reply@lurus.cn",
 				to,
 				subject: opts?.subject ?? "Test email",
 				text:
@@ -116,7 +116,7 @@ export class MailgunMailer implements Mailer {
 				state === "active" ? "verified" : "unverified";
 
 			return {
-				domain: res.domain?.name ?? d, // e.g. "mg.kurrier.org"
+				domain: res.domain?.name ?? d, // e.g. "mg.lurus.cn"
 				status,
 				dns,
 				meta: {

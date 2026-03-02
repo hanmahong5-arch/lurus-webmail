@@ -38,7 +38,7 @@ export function useThreads(
       if (cursor) params.set('cursor', cursor);
 
       const response = await client.get<ApiResponse<PaginatedResponse<ThreadSummary>>>(
-        `/api/kurrier/mailboxes/${mailboxId}/threads?${params}`
+        `/api/mail/mailboxes/${mailboxId}/threads?${params}`
       );
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch threads');
@@ -63,7 +63,7 @@ export function useInfiniteThreads(mailboxId: string, options?: { limit?: number
       if (pageParam) params.set('cursor', pageParam);
 
       const response = await client.get<ApiResponse<PaginatedResponse<ThreadSummary>>>(
-        `/api/kurrier/mailboxes/${mailboxId}/threads?${params}`
+        `/api/mail/mailboxes/${mailboxId}/threads?${params}`
       );
       if (!response.success || !response.data) {
         throw new Error(response.error?.message || 'Failed to fetch threads');
@@ -85,7 +85,7 @@ export function useMarkThreadsRead() {
 
   return useMutation({
     mutationFn: async (threadIds: string[]) => {
-      const response = await client.post<ApiResponse<null>>('/api/kurrier/threads/mark-read', { threadIds });
+      const response = await client.post<ApiResponse<null>>('/api/mail/threads/mark-read', { threadIds });
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to mark threads as read');
       }
@@ -106,7 +106,7 @@ export function useMarkThreadsUnread() {
 
   return useMutation({
     mutationFn: async (threadIds: string[]) => {
-      const response = await client.post<ApiResponse<null>>('/api/kurrier/threads/mark-unread', { threadIds });
+      const response = await client.post<ApiResponse<null>>('/api/mail/threads/mark-unread', { threadIds });
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to mark threads as unread');
       }
@@ -127,7 +127,7 @@ export function useToggleThreadsStar() {
 
   return useMutation({
     mutationFn: async ({ threadIds, starred }: { threadIds: string[]; starred: boolean }) => {
-      const response = await client.post<ApiResponse<null>>('/api/kurrier/threads/star', { threadIds, starred });
+      const response = await client.post<ApiResponse<null>>('/api/mail/threads/star', { threadIds, starred });
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to update star status');
       }
@@ -148,7 +148,7 @@ export function useMoveThreads() {
 
   return useMutation({
     mutationFn: async ({ threadIds, targetMailboxId }: { threadIds: string[]; targetMailboxId: string }) => {
-      const response = await client.post<ApiResponse<null>>('/api/kurrier/threads/move', {
+      const response = await client.post<ApiResponse<null>>('/api/mail/threads/move', {
         threadIds,
         targetMailboxId,
       });
@@ -172,7 +172,7 @@ export function useDeleteThreads() {
 
   return useMutation({
     mutationFn: async (threadIds: string[]) => {
-      const response = await client.post<ApiResponse<null>>('/api/kurrier/threads/delete', { threadIds });
+      const response = await client.post<ApiResponse<null>>('/api/mail/threads/delete', { threadIds });
       if (!response.success) {
         throw new Error(response.error?.message || 'Failed to delete threads');
       }

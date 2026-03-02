@@ -61,7 +61,7 @@ export class SendgridMailer implements Mailer {
 		try {
 			const res = await this.mailClient.send({
 				to,
-				from: opts?.from ?? "no-reply@kurrier.org",
+				from: opts?.from ?? "no-reply@lurus.cn",
 				subject: opts?.subject ?? "Test email",
 				text:
 					opts?.body ?? "This is a test email from your configured provider.",
@@ -124,7 +124,7 @@ export class SendgridMailer implements Mailer {
 				method: "POST",
 				url: "/v3/whitelabel/domains",
 				body: {
-					domain, // e.g. "kurrier.org"
+					domain, // e.g. "lurus.cn"
 					automatic_security: true,
 					custom_spf: false,
 					default: true,
@@ -136,7 +136,7 @@ export class SendgridMailer implements Mailer {
 				id: number;
 				user_id: number;
 				subdomain: string; // e.g. "em8027"
-				domain: string; // e.g. "sendgrid.kurrier.org"
+				domain: string; // e.g. "sendgrid.lurus.cn"
 				valid: boolean;
 				dns: {
 					mail_cname: {

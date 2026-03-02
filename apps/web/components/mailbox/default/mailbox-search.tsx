@@ -22,7 +22,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 // Search history management
-const SEARCH_HISTORY_KEY = "kurrier-search-history";
+const SEARCH_HISTORY_KEY = "webmail-search-history";
 const MAX_HISTORY_ITEMS = 10;
 
 function getSearchHistory(): string[] {
