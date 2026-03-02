@@ -1,5 +1,5 @@
 {
-	"title": "Kurrier API",
+	"title": "Lurus Mail API",
 	"defaultOpen": true,
 	"pages": ["authentication", "api-routes"]
 }

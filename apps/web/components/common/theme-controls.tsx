@@ -22,7 +22,7 @@ export function ThemeControls() {
 		else {
 			const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
 			el.classList.toggle("dark", prefers);
-			document.cookie = `kurrier.resolved=${prefers ? "dark" : "light"}; Max-Age=31536000; Path=/; SameSite=Lax`;
+			document.cookie = `lurus.resolved=${prefers ? "dark" : "light"}; Max-Age=31536000; Path=/; SameSite=Lax`;
 		}
 		await setModeServer(m);
 		start(() => router.refresh());

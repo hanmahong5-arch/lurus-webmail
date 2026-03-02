@@ -8,13 +8,13 @@ const inter = Inter({
 
 export const metadata = {
 	title: {
-		default: "Kurrier Instant webmail for any email provider",
-		template: "%s | Kurrier Docs",
+		default: "Lurus Mail — Instant webmail for any email provider",
+		template: "%s | Lurus Mail Docs",
 	},
 	description:
 		"Self-hosted email web client with IMAP, SMTP, SES, Mailgun, Postmark, Sendgrid provider integrations.",
 	keywords: [
-		"Kurrier",
+		"Lurus Mail",
 		"email",
 		"self-hosted",
 		"IMAP",
@@ -27,13 +27,13 @@ export const metadata = {
 		"webmail",
 	],
 	openGraph: {
-		title: "Kurrier Instant webmail",
+		title: "Lurus Mail — Instant webmail",
 		description: "Your own self-hosted webmail platform.",
-		url: "https://www.kurrier.org",
-		siteName: "Kurrier",
+		url: "https://mail.lurus.cn",
+		siteName: "Lurus Mail",
 		images: [
 			{
-				url: "https://www.kurrier.org/light-mailbox.png",
+				url: "https://mail.lurus.cn/light-mailbox.png",
 				width: 1200,
 				height: 630,
 			},
@@ -43,11 +43,11 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Kurrier Instant webmail",
+		title: "Lurus Mail — Instant webmail",
 		description: "Your own self-hosted webmail platform.",
-		images: ["https://www.kurrier.org/light-mailbox.png"],
+		images: ["https://mail.lurus.cn/light-mailbox.png"],
 	},
-	metadataBase: new URL("https://www.kurrier.org"),
+	metadataBase: new URL("https://mail.lurus.cn"),
 };
 
 export default function Layout({ children }: LayoutProps<"/">) {

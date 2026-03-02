@@ -31,7 +31,7 @@ export function LoginForm({
 
 	const handleSSOLogin = () => {
 		startOAuthTransition(async () => {
-			await signInWithOAuth("zitadel");
+			await signInWithOAuth("keycloak");
 		});
 	};
 

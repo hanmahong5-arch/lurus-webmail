@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import KurrierLogo from "@/components/kurrier/kurrier-logo";
+import MailLogo from "@/components/mail/mail-logo";
 
 /**
  * Shared layout configurations
@@ -10,12 +10,12 @@ import KurrierLogo from "@/components/kurrier/kurrier-logo";
  */
 export function baseOptions(): BaseLayoutProps {
 	return {
-		githubUrl: "https://github.com/kurrier-org/kurrier",
+		githubUrl: "https://github.com/hanmahong5-arch/lurus-webmail",
 		nav: {
 			title: (
 				<>
-					<KurrierLogo size={42} />
-					<span className={"text-blue-500 text-2xl"}>kurrier</span>
+					<MailLogo size={42} />
+					<span className={"text-blue-500 text-2xl"}>Lurus Mail</span>
 				</>
 			),
 		},

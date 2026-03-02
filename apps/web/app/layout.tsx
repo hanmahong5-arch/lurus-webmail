@@ -34,8 +34,8 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Kurrier",
-	description: "Mailbox, but nice.",
+	title: "Lurus Mail",
+	description: "Unified communication platform — email, calendar, contacts.",
 };
 
 export default async function RootLayout({

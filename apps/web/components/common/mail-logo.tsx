@@ -1,6 +1,6 @@
 import * as React from "react";
 
-interface KurrierIconProps extends React.SVGProps<SVGSVGElement> {
+interface MailLogoProps extends React.SVGProps<SVGSVGElement> {
 	size?: number | string;
 	leftFlapColor?: string;
 	topFlapColor?: string;
@@ -8,14 +8,14 @@ interface KurrierIconProps extends React.SVGProps<SVGSVGElement> {
 	flapBorderColor?: string;
 }
 
-export default function KurrierLogo({
+export default function MailLogo({
 	size = 512,
 	leftFlapColor = "#3B82F6",
 	topFlapColor = "#2563EB",
 	flapBorderColor = "#1447e6",
 	bottomFlapColor = "#60A5FA",
 	...props
-}: KurrierIconProps) {
+}: MailLogoProps) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

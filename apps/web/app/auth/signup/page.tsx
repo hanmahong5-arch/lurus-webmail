@@ -1,5 +1,5 @@
 import { SignupForm } from "@/components/auth/signup-form";
-import KurrierLogo from "@/components/common/kurrier-logo";
+import MailLogo from "@/components/common/mail-logo";
 import Link from "next/link";
 import * as React from "react";
 
@@ -11,7 +11,7 @@ export default function SignupPage() {
 					href="/"
 					className="flex items-center gap-2 self-center font-medium"
 				>
-					<KurrierLogo size={56} />
+					<MailLogo size={56} />
 					<span className="truncate font-medium text-4xl">Lurus Mail</span>
 				</Link>
 				<SignupForm />

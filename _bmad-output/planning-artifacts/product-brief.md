@@ -1,224 +1,144 @@
 ---
 stepsCompleted: [1, 2, 3, 4, 5, 6]
-inputDocuments: ['lurus.yaml', 'CLAUDE.md', 'doc/plan.md', 'doc/process.md', 'doc/decisions/0001-single-source-of-truth.md', 'project-context.md']
-date: 2026-02-02
-regenerated: 2026-02-02
+inputDocuments: ['lurus.yaml', 'CLAUDE.md', 'architecture.md', 'prd.md']
+date: 2026-02-27
+version: 2.0
 author: Anita (via BMAD Analysis)
+supersedes: product-brief.md v1.0 (2026-02-02)
 ---
 
-# Product Brief: Lurus Platform
-# 产品简报：Lurus 平台
+# Product Brief: Lurus Webmail v2.0 — "Stalwart-Native" Renovation
+# 产品简报：Lurus Webmail v2.0 — "Stalwart-Native" 改造
 
 ---
 
-## 1. Vision / 愿景
+## 1. Renovation Thesis / 改造核心论点
+
+### Why Renovate / 为什么要改造
+
+当前 lurus-webmail 基于 Kurrier 开源项目 fork，存在三个结构性问题：
+
+1. **架构冗余**: Stalwart 已原生支持 JMAP/CalDAV/CardDAV/WebDAV/全文搜索，但 Worker 仍通过 IMAP 同步数据到 PostgreSQL，再用 Typesense 做搜索 —— 双重存储、双重索引、双重维护。
+2. **Supabase 债务**: 为了桥接 Zitadel OIDC，运行着完整的 Supabase Auth 栈（Kong、GoTrue、PostgREST），增加了 4 个额外 Pod 和复杂的认证链路。
+3. **上游漂移**: 随着定制越深，与 Kurrier 上游的 merge 能力已名存实亡，但代码中仍保留大量 `kurrier` 命名和上游特有逻辑。
+
+### Core Strategy: "Stalwart-Native" / 核心策略
+
+**让 Stalwart 成为邮件/日历/联系人/存储的唯一数据源，应用层只负责 UI、路由、规则和 AI。**
+
+```
+Before: User → Next.js → Supabase → PostgREST → PostgreSQL ← IMAP Sync ← Stalwart
+After:  User → Next.js → API Layer → JMAP → Stalwart (source of truth)
+                                    → PostgreSQL (app metadata only)
+```
+
+---
+
+## 2. Vision / 愿景
 
 ### Problem Statement / 问题陈述
 
-中国中小企业和独立开发者在使用 AI 大模型和量化交易工具时，面临以下核心痛点：
-
-1. **AI 模型访问碎片化**：OpenAI、Anthropic、Google 等多个供应商，各自 API 不兼容，管理混乱
-2. **量化交易门槛高**：需要深厚的编程和金融知识，现有工具对非专业用户不友好
-3. **企业工具成本高昂**：邮件、文档、存储等基础设施依赖第三方 SaaS，数据主权丧失
-4. **运维复杂度**：多服务部署、监控、日志管理需要专业 DevOps 团队
+自建邮件系统的核心挑战不是"能不能用"，而是"能不能低成本持续维护"。当前架构将简单的邮件操作拆成了 6 步链路（Compose → API → Queue → IMAP → PostgreSQL → Typesense → UI），任何一环故障都影响体验。
 
 ### Vision Statement / 愿景声明
 
-**Lurus 是一个自建的混合云企业平台，为 2 人小团队提供 AI 网关、量化交易、邮件系统和内部工具的统一基础设施，实现数据自主权和运营自动化。**
+**lurus-webmail v2.0 是一个极简架构的自建通信平台：前端通过 JMAP 直连 Stalwart，后端只处理智能路由、AI 辅助和业务规则，实现 2 人团队可持续维护的企业级邮件体验。**
 
-### Unique Value Proposition / 独特价值主张
+### Unique Value Proposition / 独特价值
 
-| Differentiator | Description |
-|----------------|-------------|
-| **AI Gateway Unification** | 单一 API 端点访问所有主流 LLM (OpenAI, Anthropic, Google, AWS Bedrock) |
-| **Financial-Grade Backtest** | Decimal.js 精度、30+ 指标、680+ 单元测试、多 Agent AI 投资顾问 |
-| **Self-Hosted Everything** | 邮件、存储、认证全部自建，数据永远在自己手里 |
-| **AI-Native Workflow** | 自然语言策略生成、自动策略发现、工作流编排 |
-| **2-Person + AI Team** | AI Code 主导编码，人工审核关键决策，最小团队最大产出 |
-
----
-
-## 2. Target Users / 目标用户
-
-### User Persona 1: Team Owner (Anita) / 团队所有者
-
-- **角色**: 技术负责人，全栈开发者
-- **需求**: 统一管理所有服务，快速迭代新功能，低运维成本
-- **痛点**: 一个人要管 7 个服务 + 基础设施
-- **使用场景**: 日常开发、部署、监控、数据分析
-
-### User Persona 2: Quantitative Trader / 量化交易用户
-
-- **角色**: 对量化交易感兴趣的投资者
-- **需求**: 用自然语言描述策略 → AI 生成代码 → 一键回测 → 查看多维度分析
-- **痛点**: 不会编程但想做量化、市面工具太贵或太复杂
-- **使用场景**: 策略编写、回测验证、多股验证、AI 投资顾问咨询、热门策略浏览
-
-### User Persona 3: AI API Consumer / AI API 消费者
-
-- **角色**: 使用 LLM API 的开发者/企业
-- **需求**: 统一的 OpenAI 兼容 API、用量追踪、成本控制
-- **痛点**: 多供应商管理混乱，API Key 分散
-- **使用场景**: 通过 api.lurus.cn 调用各种 LLM 模型
+| 差异点 | 说明 |
+|--------|------|
+| **Stalwart-Native** | 邮件数据零冗余，Stalwart = 唯一数据源 |
+| **JMAP-First** | 2026 年最先进的邮件协议，比 IMAP 效率提升 20 倍 |
+| **AI-Assisted** | 利用已有 LLM 基础设施，实现邮件摘要/智能分类/智能撰写 |
+| **Zero Supabase** | 直连 Zitadel OIDC，认证链路从 6 步减至 2 步 |
+| **PWA Push** | 无需安装 App，浏览器推送新邮件通知 |
 
 ---
 
-## 3. Success Metrics / 成功指标
+## 3. Target Users / 目标用户
 
-### North Star Metric / 北极星指标
-
-**平台可用性 ≥ 99.5%** - 所有核心服务（API 网关、量化平台、邮件系统）的月度可用率
-
-### Key Metrics / 关键指标
-
-| Category | Metric | Baseline (Feb 2) | Current | Target |
-|----------|--------|-------------------|---------|--------|
-| **Reliability** | Monthly uptime | ~98% (manual ops) | ~98% | ≥ 99.5% |
-| **Gushen** | Backtest execution time (1yr data) | ~3-5s | ~3-5s | < 2s |
-| **Gushen** | Strategy validation stock coverage | 10 stocks | 50+ stocks | 50+ stocks |
-| **Gushen** | Active strategies (builtin + user) | ~5 | 8+ builtin + user customs | 20+ |
-| **Gushen** | Backtest engine test coverage | ~15% | **85%+ (680 tests)** | ≥ 85% |
-| **API Gateway** | LLM API response latency (p95) | ~500ms | ~500ms | < 300ms |
-| **API Gateway** | Supported model providers | 5 | 5 | 8+ |
-| **DevOps** | Deployment frequency | 2-3/week | 2-3/week | Daily |
-| **DevOps** | Mean time to recovery | ~30min | ~30min | < 10min |
-| **DevOps** | Staging environment | None | ✅ ai-qtrd-staging | Maintained |
-| **Testing** | Overall test coverage | ~40% | ~55% | ≥ 70% |
-| **Webmail** | Email delivery success rate | N/A (dev) | Beta testing | ≥ 98% |
+| 用户群 | 规模 | 使用频率 | v2.0 新增价值 |
+|--------|------|----------|---------------|
+| 团队成员 (Anita) | 2 人 | 每日 | AI 摘要、PWA 推送、更快的同步 |
+| AI 服务 | 3+ 系统 | 事件驱动 | 标准化邮件 API（via NATS） |
+| 移动设备 | 2+ 台 | 每日 | 原生 CalDAV/CardDAV via Stalwart |
 
 ---
 
-## 4. Core Features by Service / 各服务核心功能
+## 4. Success Metrics / 成功指标
 
-### 4.1 lurus-api (LLM Unified Gateway)
+### North Star Metric
+**架构组件数减少 50%** — 从当前 8 个独立组件（Web、Worker、Kong、GoTrue、PostgREST、Redis、Typesense、Stalwart）减至 4 个（Web、API、Redis、Stalwart）。
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| OpenAI-compatible API relay | ✅ Production | P0 |
-| Multi-provider support (OpenAI, Anthropic, Google, Bedrock) | ✅ Production | P0 |
-| User authentication (Zitadel OIDC) | ✅ Production | P0 |
-| Usage tracking & billing | 🔧 Partial | P1 |
-| Multi-tenant SaaS transformation | 📋 Planned | P2 |
-| Rate limiting | ✅ Production | P0 |
-| Meilisearch full-text search | ✅ Production | P1 |
-| Graceful shutdown & lifecycle | ✅ Production | P0 |
+### Key Metrics
 
-### 4.2 lurus-gushen (AI Quantitative Trading)
+| Category | Metric | Current | Target |
+|----------|--------|---------|--------|
+| Architecture | 独立 Pod 数 | 8+ | 4 |
+| Architecture | PostgreSQL 表数 (mail) | 15+ | 5 (settings only) |
+| Reliability | 邮件收发成功率 | ~95% | > 99% |
+| Delivery | 国内投递率 | 未配置 | > 95% (SendCloud) |
+| Performance | 新邮件显示延迟 | 3-5s (IMAP IDLE) | < 1s (JMAP push) |
+| Auth | 登录步骤数 | 6 (Zitadel→Supabase→Kong→GoTrue) | 2 (Zitadel→JWT) |
+| Ops | 周维护时间 | ~4h | < 1h |
+| Security | DMARC policy | p=quarantine | p=reject |
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Strategy editor (natural language → code) | ✅ Production | P0 |
-| Financial-grade backtest engine (85%+ test coverage) | ✅ Production | P0 |
-| Multi-stock validation with virtual scroll | ✅ Production | P0 |
-| 30+ financial metrics (Sharpe, MDD, etc.) | ✅ Production | P0 |
-| Multi-agent AI advisor (11 agents, 7 schools) | ✅ Production | P1 |
-| K-line data management (DB + API cascade) | ✅ Production | P0 |
-| Strategy workspace (auto-save, undo/redo) | ✅ Production | P1 |
-| Stock ranking with CSV export & a11y | ✅ Production | P1 |
-| User custom strategy in backtest selector | ✅ Production | P0 |
-| Workflow system (multi-step strategy dev) | ✅ Production | P1 |
-| Strategy crawler (GitHub discovery) | ✅ Production | P1 |
-| Hybrid cache (Redis + in-memory) | ✅ Production | P1 |
-| K8s staging environment | ✅ Deployed | P0 |
-| Real stock target selection for backtest | 🔧 In Progress | P0 |
-| Strategy template library (≥ 5 templates) | 📋 Planned | P1 |
-| Paper trading (vnpy) | 📋 Planned | P2 |
-
-### 4.3 lurus-webmail (Unified Communications)
-
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Email send/receive (IMAP/SMTP) | 🔧 Beta | P1 |
-| Self-hosted Stalwart mail server | ✅ Deployed | P0 |
-| Calendar | 📋 Planned | P2 |
-| Contacts | 📋 Planned | P2 |
-| Full-text search (Typesense) | 🔧 Development | P1 |
-| China mail relay (SendCloud) | ✅ Configured | P1 |
-
-### 4.4 lurus-switch (Desktop Client)
-
-| Feature | Status | Priority |
-|---------|--------|----------|
-| LLM provider/model configuration | ✅ Production | P1 |
-| Content generation tool | 🔧 Development | P2 |
-| Cross-platform (Windows/Mac/Linux) | ✅ Production | P1 |
-
-### 4.5 Supporting Services
-
-| Service | Feature | Status |
-|---------|---------|--------|
-| lurus-newapi | LLM API management & distribution | ✅ Production |
-| lurus-docs | Documentation center | ✅ Production |
-| lurus-www | Marketing website + AI chat sidebar | ✅ Production |
+### Anti-Metrics
+- 不追求用户增长
+- 不追求与 Kurrier 上游同步
+- 不追求 S/MIME/PGP 加密（低 ROI）
 
 ---
 
 ## 5. Scope & Boundaries / 范围与边界
 
 ### In Scope / 范围内
-
-- Self-hosted infrastructure (K3s, PostgreSQL, Redis, NATS, MinIO, Stalwart)
-- AI gateway with multi-provider relay
-- Quantitative trading platform (strategy → backtest → analysis → validation)
-- Workflow-based strategy development pipeline
-- Automated strategy discovery and conversion (crawler)
-- Unified email system
-- Desktop LLM client
-- GitOps CI/CD pipeline with staging environments
-- Monitoring stack (Grafana, Prometheus, Loki)
-- BMAD project management framework
+- 移除 Supabase Auth 全栈，直连 Zitadel OIDC
+- IMAP 同步 → JMAP 直连迁移
+- PostgreSQL 从全量存储 → 仅存储应用元数据
+- 移除 Typesense → 使用 Stalwart 内建搜索
+- AI 功能（邮件摘要、智能分类、智能回复）
+- PWA + Web Push 通知
+- 邮件认证加固（DMARC p=reject、ARC）
+- SendCloud 中国域名路由正式上线
+- OpenTelemetry 可观测性
+- 所有 kurrier 命名清理
 
 ### Out of Scope / 范围外
-
-- Public SaaS offering (currently internal use only)
-- Real-money automated trading execution (paper trading only planned)
-- Mobile native apps (web-responsive only)
-- Multi-region deployment (single cluster)
-- Third-party user onboarding (team of 2 + AI only)
-- Real-time tick data streaming (daily K-line only)
+- Go 重写后端（列入长期路线图，v2.0 保持 TypeScript）
+- S/MIME / PGP 端到端加密
+- BIMI 品牌标识（需注册商标）
+- 多租户 / 外部用户注册
+- 独立移动 App（PWA + 原生 DAV 客户端足够）
 
 ### Constraints / 约束
-
-1. **Team Size**: 2 humans + AI coding assistants
-2. **Budget**: Self-hosted on cloud VMs + office machines (hybrid cloud)
-3. **Compliance**: No real-money trading features in production
-4. **Network**: Tailscale VPN for inter-node communication
+1. 2 人团队 + AI 编码
+2. 必须保持现有邮件数据不丢失
+3. 迁移期间服务不中断（渐进式迁移）
+4. 复用现有 K3s 基础设施
 
 ---
 
-## 6. Technical Risks & Mitigations / 技术风险与缓解
+## 6. Technical Risks / 技术风险
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|-----------|------------|
-| Single PostgreSQL instance failure | Critical | Medium | CNPG operator with automated backup to MinIO |
-| K3s master node failure | Critical | Low | Automated snapshots, documented recovery runbook |
-| Data loss during backtest | Medium | Low | Decimal.js precision, K-line validation, 680+ tests |
-| AI model provider outage | Medium | Medium | Multi-provider fallback in API gateway |
-| Security breach via exposed credentials | Critical | Low | K8s secrets, .gitignore enforcement, no creds in code |
-| Worker node resource exhaustion (2C/2G) | Medium | High | Move staging to master, monitor alerts, plan upgrade |
-| Mail delivery blocked (IP reputation) | Medium | High | SendCloud relay for China domains |
-| GitHub crawler rate limiting | Low | Medium | Rate limiter, backoff strategy, caching |
+| JMAP 客户端库不成熟 | Medium | Medium | jmap-jam 已有生产案例；保留 IMAP 回退 |
+| Stalwart 单点故障 | Critical | Low | RocksDB 定期备份到 MinIO；文档化恢复流程 |
+| Supabase 移除导致数据迁移问题 | High | Medium | 分阶段迁移，先双写后切换 |
+| JMAP push 在某些网络下不稳定 | Low | Medium | 降级为轮询 + PWA push 兜底 |
+| 国内邮件投递被拦截 | Medium | High | SendCloud 信誉管理 + 定期监控 Google Postmaster |
 
 ---
 
-## 7. Revenue Model / 收入模型
+## 7. Competitive Context / 竞争对比
 
-Currently **internal tool / 内部工具** - no direct revenue.
-
-**Future potential / 未来可能**:
-1. LLM API resale (via lurus-newapi quota management)
-2. Quantitative strategy marketplace
-3. Enterprise self-hosted deployment consulting
-
----
-
-## 8. Competitive Landscape / 竞争格局
-
-| Competitor | Strength | Lurus Advantage |
-|-----------|----------|-----------------|
-| 聚宽/优矿 | Mature quant platform, large community | Self-hosted, AI-native strategy gen, no coding required |
-| OpenRouter | LLM API aggregation, many providers | Self-hosted, no vendor lock-in, data sovereignty |
-| Fastmail | Reliable email hosting | Integrated with other Lurus services, self-hosted |
-| Vercel | Next.js hosting, edge network | Full control, no per-request billing, staging env |
-
-**Lurus' moat / 护城河**: 全栈自建 + AI 驱动 + 数据自主权 + 工作流编排 + 策略自动发现，适合追求隐私和控制权的技术团队。
+| 对比项 | Gmail/Outlook | Fastmail | Roundcube | lurus-webmail v2.0 |
+|--------|--------------|----------|-----------|-------------------|
+| 数据自主权 | 无 | 无 | 有 | 有 |
+| AI 功能 | 强 | 无 | 无 | 有 (via lurus-api) |
+| JMAP 支持 | 无/内部 | 有 | 无 | 有 |
+| CalDAV/CardDAV | 有 | 有 | 需插件 | 有 (Stalwart native) |
+| 中国投递优化 | 有 | 无 | 无 | 有 (SendCloud) |
+| 运维成本 | 零 | 付费 | 中 | 低 (极简架构) |

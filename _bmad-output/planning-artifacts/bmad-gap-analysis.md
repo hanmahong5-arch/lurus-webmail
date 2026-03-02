@@ -1,287 +1,265 @@
 ---
-date: 2026-02-02
-regenerated: 2026-02-02
+date: 2026-02-27
+version: 2.0
 author: Anita (via BMAD Gap Analysis)
-framework: BMAD v6.0.0-Beta.5
-scope: Full platform assessment across all 4 BMAD phases
+framework: BMAD v6
+scope: lurus-webmail v2.0 renovation readiness assessment
+supersedes: bmad-gap-analysis.md v1.0 (2026-02-02, platform-wide)
 ---
 
-# BMAD Gap Analysis & Improvement Roadmap
-# BMAD 差距分析与改进路线图
+# lurus-webmail v2.0 — Renovation Readiness Assessment
+# lurus-webmail v2.0 — 改造准备度评估
 
 ---
 
 ## Executive Summary / 执行摘要
 
-对 Lurus 平台基于 BMAD 4 阶段方法论进行了全面审查的 **第二轮更新**。自首次评估（2026-02-02 初始版）以来，项目在 **测试覆盖率**、**文档完整性**、**基础设施** 方面取得了重大进展。主要成就包括：回测引擎 680+ 测试（85%+ 覆盖）、K8s staging 环境部署、工作流系统和策略爬虫上线、完整 BMAD 制品生成。
+对 lurus-webmail 从 Kurrier fork 改造为 Stalwart-Native 架构的准备度评估。评估基于 6 个维度：基础设施就绪度、代码库可改造性、依赖项风险、团队能力、迁移复杂度、回退安全性。
 
-### Overall Maturity Score / 整体成熟度评分
+### Overall Readiness Score / 整体准备度评分
 
-| BMAD Phase | Initial Score | Current Score | Grade | Change |
-|-----------|---------------|---------------|-------|--------|
-| Phase 1: Analysis (分析) | 45/100 | 70/100 | B- | +25 |
-| Phase 2: Planning (规划) | 35/100 | 65/100 | C+ | +30 |
-| Phase 3: Solutioning (方案) | 70/100 | 82/100 | B+ | +12 |
-| Phase 4: Implementation (实施) | 55/100 | 75/100 | B | +20 |
-| **Overall / 总分** | **51/100** | **73/100** | **B-** | **+22** |
-
----
-
-## Phase 1: Analysis Gaps / 分析阶段差距
-
-### 1.1 Product Brief / 产品简报
-
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Product vision statement | ❌ Missing | ✅ Generated | `product-brief.md` created and regenerated |
-| User personas | ❌ Missing | ✅ Defined | 3 personas documented with needs |
-| Success metrics | ❌ Missing | ✅ Defined | North Star + 12 KPIs with baselines |
-| Competitive analysis | ❌ Missing | ✅ Generated | 4 competitors analyzed |
-| Revenue model | ❌ Missing | ✅ Documented | Internal tool + 3 future options |
-
-**Remaining Gaps**:
-- 📋 Quarterly product review cadence not established
-- 📋 Product brief not yet reviewed by full team
-
-### 1.2 Market Research / 市场研究
-
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Domain research | ❌ Missing | ⚠️ Partial | Competitive analysis done, no deep market research |
-| Technical research | ⚠️ Partial | ✅ Documented | Tech stack decisions with ADRs (11 total) |
-| User research | ❌ Missing | ⚠️ Minimal | Team-only usage, no formal feedback |
-
-**Recommendation**:
-- Consider lightweight user feedback mechanism (usage analytics)
-- Domain research can be deferred (2-person team, internal tool)
+| Dimension | Score | Grade | Notes |
+|-----------|-------|-------|-------|
+| Infrastructure Readiness | 85/100 | A- | Stalwart, NATS, Redis 已就位 |
+| Codebase Malleability | 60/100 | C+ | Supabase 深度耦合需大量替换 |
+| Dependency Risk | 70/100 | B | jmap-jam 新但可控，Stalwart 成熟 |
+| Team Capability | 80/100 | B+ | TypeScript 熟练，JMAP 需学习 |
+| Migration Complexity | 55/100 | C | Auth + data migration 同时进行有风险 |
+| Rollback Safety | 75/100 | B | Feature flag 策略可保证回退 |
+| **Overall** | **71/100** | **B-** | **可以启动，需注意 Phase 1-2 风险** |
 
 ---
 
-## Phase 2: Planning Gaps / 规划阶段差距
+## 1. Infrastructure Readiness / 基础设施就绪度
 
-### 2.1 PRD (Product Requirements Document)
+### Already Running / 已就绪
 
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Formal PRD | ❌ Missing | ✅ Generated | `prd-gushen.md` with 6 user journeys |
-| Functional requirements | ⚠️ Implicit | ✅ 8 FR categories | FR-1 to FR-8, 60+ requirements tracked |
-| Non-functional requirements | ⚠️ Partial | ✅ 5 NFR categories | Performance, reliability, security, a11y, testing |
-| User journeys | ❌ Missing | ✅ 6 journeys | Core flow, validation, advisor, workspace, workflow, crawler |
-| Acceptance criteria | ❌ Missing | ✅ 30+ ACs | AC-1.1 through AC-6.5 |
+| Component | Status | Location | Ready for v2.0? |
+|-----------|--------|----------|-----------------|
+| Stalwart Mail Server | Running | mail namespace | Yes — JMAP endpoint at :8080 |
+| PostgreSQL (CNPG) | Running | database namespace | Yes — schema: webmail |
+| Redis | Running | lurus-webmail namespace | Yes — BullMQ queues |
+| NATS | Running | messaging node | Yes — need create WEBMAIL_EVENTS stream |
+| Zitadel | Running | auth.lurus.cn | Yes — need create OIDC app |
+| Traefik | Running | kube-system | Yes — ingress routes need update |
+| ArgoCD | Running | argocd namespace | Yes — no change needed |
+| Grafana/Prometheus | Running | monitoring | Yes — add webmail dashboard |
 
-**Remaining Gaps**:
-- 📋 PRDs for other services (lurus-api, lurus-webmail) not yet created
-- 📋 API documentation (OpenAPI spec) still missing
+### Needs Configuration / 需要配置
 
-### 2.2 UX Design / UX 设计
+| Item | Effort | Blocker? |
+|------|--------|----------|
+| Stalwart OIDC → Zitadel | 2h | Yes (Epic 0 blocker) |
+| Zitadel OIDC app for webmail | 1h | Yes (Epic 0 blocker) |
+| SendCloud credentials | 1h | No (degraded: all via Stalwart) |
+| NATS WEBMAIL_EVENTS stream | 30min | No (Epic 4) |
+| Stalwart admin password | 30min | No (security hardening) |
+| DMARC upgrade to p=reject | 1h + 1week monitoring | No (gradual) |
 
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Design system | ✅ Exists | ✅ Active | `docs/DESIGN_SYSTEM.md` for gushen-web |
-| UX specification | ❌ Missing | ⚠️ Partial | Implicit in PRD user journeys |
-| Responsive design spec | ⚠️ Partial | ✅ Implemented | Mobile card view below 768px |
-| Accessibility spec | ⚠️ Partial | ✅ Improved | ARIA labels, keyboard nav, WCAG targets |
+### Not Available / 缺失
 
-**Remaining Gaps**:
-- 📋 Formal UX specification still needed for complex flows
-- 📋 Component library documentation
-
----
-
-## Phase 3: Solutioning Gaps / 方案阶段差距
-
-### 3.1 Architecture / 架构
-
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Architecture document | ⚠️ Partial | ✅ Comprehensive | `architecture.md` with 11 ADRs |
-| Architecture Decision Records | ⚠️ 1 ADR | ✅ 11 ADRs | ADR-001 to ADR-011 covering all major decisions |
-| System context diagram | ❌ Missing | ✅ ASCII diagram | System boundary + infrastructure topology |
-| Data flow diagram | ❌ Missing | ✅ Schema map | Database, cache, and event streaming documented |
-| Security architecture | ⚠️ Implicit | ✅ Documented | Auth flow, network security, data protection |
-| Technology radar | ❌ Missing | ✅ Generated | 15 technologies rated (Adopt/Trial/Assess/Hold) |
-
-**Remaining Gaps**:
-- 📋 Visual architecture diagrams (Excalidraw/draw.io) for presentation
-- 📋 Capacity planning spreadsheet
-
-### 3.2 Epics & Stories / 史诗与用户故事
-
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Epic definition | ❌ Missing | ⚠️ Informal | Q2 roadmap has 5 epics in plan.md |
-| User stories | ❌ Missing | ⚠️ Implicit | PRD FRs can be decomposed to stories |
-| Sprint planning | ❌ Missing | ✅ Active | 3 sprints planned in doc/plan.md |
-| Backlog grooming | ❌ Missing | ⚠️ Partial | plan.md populated but no formal backlog tool |
-
-**Remaining Gaps**:
-- 📋 Formal epics document for lurus-gushen (`epics-gushen.md`)
-- 📋 Story estimation and velocity tracking
+| Item | Impact | Mitigation |
+|------|--------|------------|
+| Stalwart backup automation | High | Add RocksDB snapshot to MinIO cron |
+| Web Push VAPID keys | Low | Generate during Epic 3 |
+| OTel Collector | Low | Deploy during Epic 5 |
 
 ---
 
-## Phase 4: Implementation Gaps / 实施阶段差距
+## 2. Codebase Analysis / 代码库分析
 
-### 4.1 Code Quality / 代码质量
+### Supabase Coupling Points / Supabase 耦合点
 
-| Item | Previous | Current | Assessment |
-|------|----------|---------|------------|
-| Code style consistency | ✅ Good | ✅ Good | CLAUDE.md enforces standards |
-| Type safety | ✅ Good | ✅ Good | TypeScript strict mode, Zod validation |
-| Error handling | ✅ Good | ✅ Good | Structured error codes (BT1XX-BT9XX) |
-| Financial precision | ✅ Excellent | ✅ Excellent | Decimal.js, 680+ tests verifying |
-| Component architecture | ✅ Good | ✅ Good | React.memo, virtual scroll, hooks |
-| New features | N/A | ✅ Added | Workflow system, strategy crawler, hybrid cache |
+| Location | Type | Replacement Effort |
+|----------|------|-------------------|
+| `packages/api-client/` | Supabase JS client wrapper | High — full rewrite to fetch + JWT |
+| `apps/web/app/auth/` | Supabase Auth flows | High — rewrite to Zitadel OIDC |
+| `apps/web/next.config.ts` | `/api/kong/*` rewrites | Low — remove rewrite rules |
+| `apps/worker/lib/api-helpers.ts` | Supabase auth verification | Medium — replace with JWT verify |
+| `packages/db/` | Drizzle ORM (PostgreSQL) | Low — keep, reduce table scope |
+| `k8s/supabase.yaml` | Kong, GoTrue deployments | Low — delete manifests |
 
-### 4.2 Testing / 测试
+**Total Supabase replacement: ~40 files, estimated 3-5 days of focused work.**
 
-| Service | Previous Coverage | Current Coverage | Target | Gap |
-|---------|------------------|-----------------|--------|-----|
-| lurus-gushen (backtest/) | ~15% | **85%+ (680 tests)** | 80% | **✅ Exceeded** |
-| lurus-gushen (components) | ~5% | ~25% | 50% | -25% |
-| lurus-api | ~50% | ~50% | 70% | -20% |
-| lurus-switch | ~40% | ~40% | 60% | -20% |
-| lurus-webmail | ~5% | ~10% | 50% | -40% |
-| lurus-www | 0% | 0% | 30% | -30% |
+### IMAP Code to Deprecate / IMAP 代码待废弃
 
-**Major Achievement**: Backtest engine coverage went from ~15% to 85%+ (680 tests). This was the highest-risk area identified in the initial gap analysis.
+| Directory | Lines (est.) | Purpose | Replaced By |
+|-----------|-------------|---------|-------------|
+| `apps/worker/lib/imap/` | ~2,000 | IMAP sync, IDLE, delta-fetch | JMAP client |
+| `apps/worker/server/plugins/smtp-worker.ts` | ~300 | IMAP sync jobs | JMAP push events |
+| `apps/worker/server/plugins/common-worker.ts` | ~200 | Sync-related jobs | Reduced scope |
 
-**Remaining Gaps**:
-- Priority 1: Component tests for gushen-web (strategy editor, ranking)
-- Priority 2: lurus-api coverage improvement
-- Priority 3: lurus-webmail basic test suite
+**Total IMAP code to remove: ~2,500 lines**
 
-### 4.3 CI/CD Pipeline / CI/CD 流水线
+### Code to Keep / 保留的代码
 
-| Item | Previous | Current | Status |
-|------|----------|---------|--------|
-| Automated build | ✅ Working | ✅ Working | GitHub Actions |
-| Automated tests in CI | ⚠️ Partial | ⚠️ Partial | Backtest tests comprehensive, CI step pending |
-| Docker image build | ✅ Working | ✅ Working | Multi-stage, public dir fix applied |
-| ArgoCD sync | ✅ Working | ✅ Working | GitOps |
-| Staging environment | ❌ Missing | ✅ Deployed | `ai-qtrd-staging` namespace |
-| Rollback procedure | ⚠️ Manual | ⚠️ Manual | ArgoCD supports it, not documented |
+| Directory | Purpose | Changes Needed |
+|-----------|---------|---------------|
+| `apps/web/app/dashboard/` | Mail/Calendar/Contacts UI | Data source: PG → JMAP |
+| `apps/worker/lib/smtp/router.ts` | China/International routing | Keep, minor refactor |
+| `apps/worker/lib/admin/stalwart-api.ts` | Stalwart Admin API client | Keep, extend |
+| `packages/db/` | Drizzle ORM + migrations | Reduce to metadata tables |
+| `packages/schema/` | Zod validation | Keep |
+| `packages/ui/` | React UI components | Keep |
+| `packages/core/` | Business logic | Keep |
 
-**Remaining Gaps**:
-- 📋 CI mandatory test step for all services
-- 📋 Documented rollback procedure in `doc/runbook/`
-- 📋 Automated staging deployment on PR
+### New Code Required / 需要新写的代码
 
-### 4.4 Documentation / 文档
+| Component | Lines (est.) | Epic |
+|-----------|-------------|------|
+| JMAP client layer (jmap-jam wrapper) | ~500 | Epic 2 |
+| JMAP API proxy routes | ~300 | Epic 2 |
+| Zitadel OIDC auth (Next.js) | ~400 | Epic 1 |
+| JWT middleware + RLS helper | ~200 | Epic 1 |
+| AI feature endpoints | ~600 | Epic 3 |
+| PWA Service Worker + Web Push | ~400 | Epic 3 |
+| NATS event publisher | ~200 | Epic 4 |
+| Sieve rule compiler | ~300 | Epic 4 |
+| OTel instrumentation | ~300 | Epic 5 |
 
-| Item | Previous | Current | Assessment |
-|------|----------|---------|------------|
-| Root README.md | ✅ Basic | ✅ Good | Quick start guide |
-| CLAUDE.md (root) | ✅ Good | ✅ Updated | Company standards |
-| CLAUDE.md (gushen-web) | ✅ Excellent | ✅ Updated | Dev workflow |
-| doc/process.md | ✅ Active | ✅ Active | 10KB development log |
-| doc/plan.md | ❌ Empty | ✅ Populated | Q1-Q3 roadmap with sprints |
-| doc/structure.md | ❌ Missing | ⚠️ Partial | Architecture.md serves as substitute |
-| doc/develop-guide.md | ❌ Missing | ⚠️ Partial | CLAUDE.md + project-context.md serve as substitute |
-| BMAD artifacts | ❌ None | ✅ 5 documents | project-context, product-brief, prd, architecture, gap-analysis |
-| API documentation | ❌ None | ⚠️ Partial | API surface documented in PRD, no OpenAPI spec |
+**Total new code: ~3,200 lines**
 
 ---
 
-## Risk Assessment Matrix / 风险评估矩阵
+## 3. Dependency Risk Assessment / 依赖项风险评估
 
-| # | Risk | Category | Severity | Likelihood | Priority | Previous |
-|---|------|----------|----------|-----------|----------|----------|
-| R1 | Worker node resource exhaustion (2C/2GB) | Infrastructure | High | High | **P0** | P0 (unchanged) |
-| R2 | ~~No staging environment~~ | ~~Process~~ | ~~High~~ | ~~Medium~~ | ~~P0~~ | **Resolved** |
-| R3 | ~~Low test coverage on financial engine~~ | ~~Quality~~ | ~~Critical~~ | ~~Medium~~ | ~~P0~~ | **Resolved (85%+)** |
-| R4 | ~~Empty planning documents~~ | ~~Process~~ | ~~Medium~~ | ~~Already true~~ | ~~P1~~ | **Resolved** |
-| R5 | Single PostgreSQL instance (no HA) | Infrastructure | Critical | Low | **P1** | P1 (unchanged) |
-| R6 | ~~No formal PRD~~ | ~~Process~~ | ~~Medium~~ | ~~Medium~~ | ~~P1~~ | **Resolved** |
-| R7 | Component test coverage < 50% | Quality | Medium | Already true | **P1** | New |
-| R8 | No CI mandatory test step | Process | Medium | Already true | **P1** | Elevated |
-| R9 | Office node reliability for messaging | Infrastructure | Medium | Medium | **P2** | P2 (unchanged) |
-| R10 | No API documentation (OpenAPI) | DX | Medium | Already true | **P2** | P2 (unchanged) |
-| R11 | IP reputation for self-hosted mail | Operations | Medium | High | **P2** | P2 (unchanged) |
-| R12 | Crawler rate limiting / GitHub API | Operations | Low | Medium | **P3** | New |
+### Critical Dependencies / 关键依赖
 
-**Resolved Risks**: R2 (staging), R3 (test coverage), R4 (empty plans), R6 (no PRD) - 4 out of 10 original risks resolved.
+| Dependency | Risk | Maturity | Mitigation |
+|------------|------|----------|------------|
+| **Stalwart JMAP** | Medium | High (Rust, security audited) | Pin version; E2E test JMAP flows |
+| **jmap-jam** | Medium | Low (73 stars, active) | Small codebase (~2KB), forkable; evaluate jmap-yacl as alternative |
+| **Zitadel OIDC** | Low | High (production at auth.lurus.cn) | Already in use by other services |
+| **Drizzle ORM** | Low | High (v0.44, widely used) | No change from v1.0 |
+| **BullMQ** | Low | High (v5.61, mature) | No change from v1.0 |
+| **NATS** | Low | High (production at messaging node) | Already in use by lurus-identity |
 
----
+### jmap-jam Library Evaluation / jmap-jam 库评估
 
-## Improvement Roadmap / 改进路线图
+| Criteria | Assessment |
+|----------|-----------|
+| Bundle size | ~2KB gzipped — excellent |
+| TypeScript support | Strong typing, zero-dep |
+| API coverage | JMAP Core + Mail — sufficient |
+| Active maintenance | Last update Jan 2026 |
+| Production usage | Unknown (73 stars) |
+| Risk mitigation | Small codebase, easy to fork/patch |
 
-### Completed Since Initial Assessment / 已完成
-
-1. ✅ **Product brief generated** → `product-brief.md`
-2. ✅ **Architecture document generated** → `architecture.md` (11 ADRs)
-3. ✅ **Project context generated** → `project-context.md`
-4. ✅ **PRD created for lurus-gushen** → `prd-gushen.md` (6 journeys, 60+ FRs)
-5. ✅ **Gap analysis generated** → `bmad-gap-analysis.md`
-6. ✅ **Financial engine tests** → 680+ tests, 85%+ coverage
-7. ✅ **Staging environment deployed** → `ai-qtrd-staging` namespace
-8. ✅ **doc/plan.md populated** → Q1-Q3 roadmap with sprints
-9. ✅ **Workflow system launched** → Multi-step strategy development
-10. ✅ **Strategy crawler launched** → GitHub discovery pipeline
-11. ✅ **Hybrid cache implemented** → Redis + in-memory
-
-### Immediate (This Sprint) / 立即行动
-
-1. **Add CI mandatory test step** to all GitHub Actions workflows
-2. **Component tests** for strategy editor and backtest panel
-3. **Monitor worker node** resource usage, plan upgrade path
-
-### Short-Term (Next Sprint) / 短期
-
-4. **Create `epics-gushen.md`** with formal epic/story breakdown
-5. **Create `doc/structure.md`** from architecture.md output
-6. **Document rollback procedure** in `doc/runbook/`
-7. **Increase component test coverage** to 40%+
-
-### Medium-Term (1 Month) / 中期
-
-8. **Create PRDs** for lurus-api and lurus-webmail
-9. **Generate OpenAPI specs** for lurus-api
-10. **Implement sprint retrospective** process
-11. **Achieve 60%+ overall test coverage**
-
-### Long-Term (Quarter) / 长期
-
-12. **Consider PostgreSQL HA** (CNPG failover testing)
-13. **Upgrade worker node** resources (2C/2G → 4C/4G)
-14. **Formal UX design** using BMAD workflow
-15. **Achieve 70%+ overall test coverage**
-16. **Sprint velocity tracking** and estimation
+**Recommendation:** Start with jmap-jam. If issues arise, switch to jmap-yacl (tested against Stalwart). Both are small enough to fork.
 
 ---
 
-## BMAD Workflow Recommendations / BMAD 工作流建议
+## 4. Migration Risk Matrix / 迁移风险矩阵
 
-Based on the updated gap analysis, recommended next BMAD workflows:
+| Risk | Phase | Severity | Likelihood | Mitigation |
+|------|-------|----------|-----------|------------|
+| Supabase removal breaks all UI data access | Epic 1 | Critical | High | Map ALL Supabase calls first; replace one-by-one; feature flag |
+| JMAP responses differ from PostgreSQL schema | Epic 2 | High | Medium | Build adapter layer; normalize JMAP data to match current UI props |
+| Stalwart OIDC token flow incompatible | Epic 0 | High | Low | Test in isolation first; fallback to basic auth |
+| PostgreSQL mail data not in Stalwart | Epic 2 | Medium | Low | Data already synced via IMAP; Stalwart has authoritative copy |
+| SendCloud credentials unavailable | Epic 0 | Medium | Medium | All mail routes through Stalwart direct (lower China deliverability) |
+| JMAP push unreliable | Epic 2 | Low | Medium | Polling fallback (30s); Web Push as secondary channel |
+| AI latency too high for UX | Epic 3 | Low | Low | All AI async; never block mail operations |
 
-| Order | Workflow | Agent | Purpose | Status |
-|-------|----------|-------|---------|--------|
-| 1 | `generate-project-context` | BMad Master | Project context | ✅ Done (regenerated) |
-| 2 | `create-product-brief` | Mary (Analyst) | Product brief | ✅ Done (regenerated) |
-| 3 | `create-prd` (gushen) | John (PM) | Gushen PRD | ✅ Done (regenerated) |
-| 4 | `create-architecture` | Winston (Architect) | Architecture doc | ✅ Done (regenerated) |
-| 5 | `check-implementation-readiness` | Bob (SM) | Gap analysis | ✅ Done (regenerated) |
-| 6 | `create-epics-and-stories` | Bob (SM) | **Next** - Break PRD into epics |
-| 7 | `sprint-planning` | Bob (SM) | Generate sprint-status.yaml |
-| 8 | `create-prd` (api) | John (PM) | PRD for lurus-api |
-| 9 | `create-prd` (webmail) | John (PM) | PRD for lurus-webmail |
-| 10 | `code-review` | Amelia (Dev) | Adversarial review of critical paths |
+### Critical Path / 关键路径
+
+```
+Epic 0 (Foundation)
+  └─ Story 0.3 (Stalwart OIDC) ← BLOCKER for everything
+  └─ Story 0.5 (Zitadel app) ← BLOCKER for Epic 1
+      └─ Epic 1 (Auth Overhaul)
+          └─ Story 1.1 (Zitadel in Next.js) ← BLOCKER for JMAP auth
+          └─ Story 1.4 (Replace Supabase calls) ← HIGHEST EFFORT
+              └─ Epic 2 (JMAP Core)
+                  └─ Story 2.1 (JMAP client) ← BLOCKER for all JMAP stories
+                  └─ Story 2.3 (Inbox migration) ← KEY VALIDATION POINT
+```
+
+---
+
+## 5. Rollback Strategy / 回退策略
+
+### Per-Phase Rollback / 每阶段回退方案
+
+| Phase | Rollback Method | Data Loss Risk |
+|-------|----------------|---------------|
+| Epic 0 (Foundation) | Revert K8s secrets; no code change | None |
+| Epic 1 (Auth) | Feature flag: `SUPABASE_DISABLED=false` → old auth path | None |
+| Epic 2 (JMAP) | Feature flag: `JMAP_ENABLED=false` → PostgreSQL path | None (dual-read period) |
+| Epic 3 (AI/PWA) | Feature flag: `AI_ENABLED=false`, `PWA_ENABLED=false` | None (additive features) |
+| Epic 4 (DAV/Rules) | Revert Sieve scripts; re-enable app-layer rules | None |
+| Epic 5 (Cleanup) | **No rollback** — only proceed when all prior phases stable | N/A |
+
+### Feature Flag Implementation / 特性开关实现
+
+```typescript
+// Controlled via environment variables in K8s ConfigMap
+const flags = {
+  SUPABASE_DISABLED: process.env.SUPABASE_DISABLED === 'true',
+  JMAP_ENABLED: process.env.JMAP_ENABLED === 'true',
+  AI_ENABLED: process.env.AI_ENABLED === 'true',
+  PWA_ENABLED: process.env.PWA_ENABLED === 'true',
+};
+
+// Usage in API routes
+if (flags.JMAP_ENABLED) {
+  return fetchFromJMAP(mailboxId);
+} else {
+  return fetchFromPostgreSQL(mailboxId);  // legacy path
+}
+```
+
+---
+
+## 6. Go-NoGo Checklist / 启动检查清单
+
+### Must Have Before Starting / 启动前必须就绪
+
+| # | Item | Status | Owner |
+|---|------|--------|-------|
+| 1 | Stalwart JMAP endpoint reachable from lurus-webmail namespace | ⏳ Verify | Anita |
+| 2 | Zitadel OIDC application created for mail.lurus.cn | ⏳ Create | Anita |
+| 3 | Stalwart OIDC configured with Zitadel | ⏳ Configure | Anita |
+| 4 | Full inventory of Supabase client calls (file:line) | ⏳ Audit | AI |
+| 5 | jmap-jam library evaluated against Stalwart (basic test) | ⏳ Test | AI |
+| 6 | Stalwart backup procedure documented | ⏳ Document | Anita |
+| 7 | Current mail data verified in Stalwart (not only in PG) | ⏳ Verify | Anita |
+
+### Nice to Have / 最好有
+
+| # | Item | Status |
+|---|------|--------|
+| 8 | SendCloud credentials configured | ⏳ |
+| 9 | NATS WEBMAIL_EVENTS stream created | ⏳ |
+| 10 | Grafana dashboard placeholder created | ⏳ |
+
+---
+
+## 7. Effort Estimation Summary / 工作量估算
+
+| Phase | New Code | Remove Code | Config | Total Effort |
+|-------|----------|-------------|--------|-------------|
+| Epic 0 | ~100 lines | ~50 lines | Heavy (credentials, DNS) | 2 weeks |
+| Epic 1 | ~600 lines | ~1,500 lines (Supabase) | Medium (K8s manifests) | 2 weeks |
+| Epic 2 | ~800 lines | ~2,500 lines (IMAP) | Light | 3 weeks |
+| Epic 3 | ~1,000 lines | 0 | Medium (VAPID, AI config) | 2 weeks |
+| Epic 4 | ~500 lines | ~1,000 lines (DAV) | Light | 2 weeks |
+| Epic 5 | ~300 lines | ~500 lines (cleanup) | Medium (OTel, Grafana) | 1 week |
+| **Total** | **~3,300 lines** | **~5,550 lines** | — | **~12 weeks** |
+
+**Net code change: -2,250 lines (code reduction)** — This is a good sign. The renovation makes the codebase smaller while adding features.
 
 ---
 
 ## Conclusion / 结论
 
-Lurus 平台自首次 BMAD 评估以来取得了显著进步：
+**Readiness: GO with caution / 准备就绪，谨慎执行**
 
-**成就 / Achievements**:
-- 整体成熟度从 **C- (51/100) 提升到 B- (73/100)**
-- 4 个关键风险已解决（staging、测试覆盖、PRD、计划文档）
-- 回测引擎测试覆盖从 15% 提升到 85%+ (680 tests)
-- 完整的 BMAD 制品套件已生成（5 个核心文档）
-- 工作流系统和策略爬虫两个新功能上线
+核心风险集中在 Epic 0-1（Stalwart OIDC + Supabase 移除），这两个阶段是最大的技术挑战。一旦认证链路打通，后续的 JMAP 迁移和功能添加相对低风险。
 
-**下一步重点 / Next Focus**:
-- CI 流水线强制测试步骤
-- 组件测试覆盖率提升
-- 正式 Epic/Story 分解
-- Worker 节点资源监控和升级计划
+**建议执行顺序:**
+1. 先完成 Go-NoGo Checklist 的 7 个必要项
+2. Epic 0 + Epic 1 紧密衔接，密集执行
+3. Epic 2 是核心验证点 — Story 2.3（Inbox 迁移）决定整体迁移可行性
+4. Epic 3 和 Epic 4 可以并行
+5. Epic 5 仅在前序 Epic 全部稳定后执行

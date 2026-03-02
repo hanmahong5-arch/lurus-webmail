@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { GridPatternDemo } from "@/components/kurrier/grid-pattern";
+import { GridPatternDemo } from "@/components/mail/grid-pattern";
 import { Highlighter } from "@/components/ui/highlighter";
-import FeatureExample from "@/components/kurrier/feature";
+import FeatureExample from "@/components/mail/feature";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
@@ -56,7 +56,7 @@ export default function HomePage() {
 					size={"sm"}
 				>
 					<Link href={"https://buy.stripe.com/dRmfZje75d4OaGG8ux3Nm00"}>
-						💙 Support Kurrier
+						💙 Support Lurus Mail
 					</Link>
 				</Button>
 			</div>

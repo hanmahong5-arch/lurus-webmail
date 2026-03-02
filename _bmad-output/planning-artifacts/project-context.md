@@ -80,12 +80,24 @@ _本文件包含 AI Agent 在 Lurus 平台实现代码时必须遵循的关键�
 | GORM | latest | ORM for PostgreSQL |
 | JWT | golang-jwt v5 | Authentication |
 
-#### lurus-webmail (Email Platform)
+#### lurus-webmail (Email Platform — v2.0 Renovation)
 
 | Technology | Version | Notes |
 |-----------|---------|-------|
-| Next.js + Nitro | latest | Web + Worker architecture |
-| Package Manager | **pnpm** | Monorepo (NOT bun) |
+| Next.js 16 + React 19 | latest | Frontend (PWA + JMAP client) |
+| Nitro H3 | latest | API layer (thin: routing, AI, webhooks) |
+| Mantine 8 + TipTap 3 | latest | UI components + Rich text editor |
+| jmap-jam | latest | TypeScript JMAP client (replaces ImapFlow) |
+| Drizzle ORM | latest | PostgreSQL (app metadata only) |
+| BullMQ | latest | Redis-backed job queue |
+| Package Manager | **Bun** | Monorepo workspaces |
+| Auth | Zitadel OIDC direct | No Supabase (removed in v2.0) |
+| Mail Protocol | **JMAP** (primary) | IMAP retained for external clients only |
+| Data Store | **Stalwart** (primary) | PostgreSQL for settings/rules/AI metadata only |
+| Search | Stalwart built-in FTS | Typesense removed in v2.0 |
+| AI | lurus-api LLM gateway | Summarization, categorization, smart reply |
+| Push | Web Push (VAPID) | PWA Service Worker |
+| Events | NATS (WEBMAIL_EVENTS) | Cross-service event publishing |
 
 #### lurus-switch (Desktop Client)
 

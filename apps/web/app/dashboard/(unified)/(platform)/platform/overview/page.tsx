@@ -29,7 +29,7 @@ export default async function Page() {
 							<div className="rounded-xl border border-border bg-gradient-to-br from-muted/60 to-muted/30 p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
 								<div>
 									<h2 className="text-lg font-semibold text-foreground mb-1">
-										Welcome to Kurrier 👋
+										Welcome to Lurus Mail 👋
 									</h2>
 									<p className="text-sm text-muted-foreground max-w-prose">
 										Let’s get your email system up and running. Start by

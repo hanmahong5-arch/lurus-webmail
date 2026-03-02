@@ -46,7 +46,7 @@ export function SignupForm({
 
 	const handleSSOSignup = () => {
 		startOAuthTransition(async () => {
-			await signInWithOAuth("zitadel");
+			await signInWithOAuth("keycloak");
 		});
 	};
 
