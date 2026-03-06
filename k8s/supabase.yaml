@@ -249,7 +249,7 @@ spec:
       port: 8000
       targetPort: 8000
 ---
-# Storage API (附件存储)
+# Storage API (v2 已废弃 — 附件改由 Stalwart 存储)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -258,7 +258,7 @@ metadata:
   labels:
     app: webmail-storage
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: webmail-storage
